@@ -109,15 +109,22 @@ body {
 
     <a href="{{ route('petugas.dashboard') }}"
        class="{{ request()->routeIs('petugas.dashboard') ? 'active' : '' }}">
-        Dashboard
+       Dashboard
     </a>
 
-    <a href="#">
-        Pantau Peminjaman
+    <a href="{{ route('petugas.peminjaman') }}"
+       class="{{ request()->routeIs('petugas.peminjaman') ? 'active' : '' }}">
+       Pantau Peminjaman
     </a>
 
-    <a href="#">
-        Laporan
+    <a href="{{ route('petugas.pengembalian') }}"
+       class="{{ request()->routeIs('petugas.pengembalian') ? 'active' : '' }}">
+       Data Pengembalian
+    </a>
+
+    <a href="{{ route('petugas.laporan') }}"
+       class="{{ request()->routeIs('petugas.laporan') ? 'active' : '' }}">
+       Laporan
     </a>
 
     <div class="logout">
@@ -127,6 +134,7 @@ body {
         </form>
     </div>
 </div>
+
 
 <div class="content">
     @yield('content')

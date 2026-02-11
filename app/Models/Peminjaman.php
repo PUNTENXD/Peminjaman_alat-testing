@@ -19,7 +19,7 @@ class Peminjaman extends Model
         'jumlah',
         'tgl_pinjam',
         'tgl_rencana_kembali',
-        'tgl_kembali ',
+        'tgl_kembali',
         'status'
     ];
 

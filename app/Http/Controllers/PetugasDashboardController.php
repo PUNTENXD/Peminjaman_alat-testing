@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Peminjaman;
+use App\Models\Alat;
+use Illuminate\Http\Request;
+
 
 class PetugasDashboardController extends Controller
 {
@@ -27,12 +30,16 @@ class PetugasDashboardController extends Controller
     }
 
     public function pengembalian()
-    {
-        $data = Peminjaman::with(['user','alat'])
-            ->where('status', 'kembali')
-            ->orderBy('id_peminjaman','desc')
-            ->get();
+{
+    $data = Peminjaman::with(['user','alat'])
+        ->where('status', 'kembali')
+        ->orderBy('id_peminjaman','desc')
+        ->get();
 
-        return view('petugas.pengembalian', compact('data'));
-    }
+    return view('petugas.pengembalian', compact('data'));
+}
+
+
+
+
 }

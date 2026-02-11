@@ -169,6 +169,13 @@ Route::middleware('role:petugas')->group(function () {
 
     Route::get('/petugas/pengembalian', [\App\Http\Controllers\PetugasDashboardController::class, 'pengembalian'])
         ->name('petugas.pengembalian');
+
+    Route::get('/petugas/laporan', [\App\Http\Controllers\PetugasDashboardController::class, 'laporan'])
+    ->name('petugas.laporan');
+
+    // return view('petugas.laporan', compact('data','alat'));
+
+
 });
 
 
