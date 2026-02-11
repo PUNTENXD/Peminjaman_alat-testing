@@ -30,7 +30,7 @@ class Peminjaman extends Model
 
     public function alat()
     {
-        return $this->belongsTo(Alat::class, 'id_alat');
+          return $this->belongsTo(Alat::class,'id_alat','id_alat');
     }
 
     

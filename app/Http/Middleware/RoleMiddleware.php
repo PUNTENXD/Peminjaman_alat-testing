@@ -4,16 +4,20 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class RoleMiddleware
 {
     public function handle(Request $request, Closure $next, ...$roles)
     {
-        if (!auth()->check()) {
+        if (!Auth::check()) {
             return redirect()->route('login');
         }
 
-        if (!in_array(auth()->user()->role, $roles)) {
+        $userRole = strtolower(Auth::user()->role);
+        $allowedRoles = array_map('strtolower', $roles);
+
+        if (!in_array($userRole, $allowedRoles)) {
             abort(403, 'Akses ditolak');
         }
 

@@ -8,6 +8,8 @@ use App\Http\Controllers\LogAktivitasController;
 use App\Http\Controllers\AdminDashboardController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\UserDashboardController;
+use Illuminate\Support\Facades\Auth;
 
 /*
 |--------------------------------------------------------------------------
@@ -33,7 +35,7 @@ Route::post('/login', [AuthenticatedSessionController::class, 'store'])
     ->name('login.store');
 
 Route::post('/logout', function () {
-    auth()->logout();
+   Auth::logout();
     request()->session()->invalidate();
     request()->session()->regenerateToken();
     return redirect('/login');
@@ -177,6 +179,21 @@ Route::middleware('role:petugas')->group(function () {
 
 
 });
+
+
+
+Route::middleware(['auth','role:peminjam'])->group(function () {
+
+    Route::get('/user/dashboard', [UserDashboardController::class, 'index'])
+        ->name('user.dashboard');
+
+    Route::post('/user/pinjam', [UserDashboardController::class, 'pinjam'])
+        ->name('user.pinjam');
+
+    Route::post('/user/kembali/{id}', [UserDashboardController::class, 'kembali'])
+        ->name('user.kembali');
+});
+
 
 
 
