@@ -13,7 +13,7 @@ class User extends Authenticatable
     public $timestamps = true;
 
     const CREATED_AT = 'create_at';
-    const UPDATED_AT = 'updated_at';
+    const UPDATED_AT = 'update_at';
 
     protected $fillable = [
         'username',

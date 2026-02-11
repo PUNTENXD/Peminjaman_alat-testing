@@ -11,7 +11,7 @@ class Peminjaman extends Model
 
     public $timestamps = true;
     const CREATED_AT = 'create_at';
-    const UPDATED_AT = 'updated_at';
+    const UPDATED_AT = 'update_at';
 
     protected $fillable = [
         'id_user',
@@ -19,6 +19,7 @@ class Peminjaman extends Model
         'jumlah',
         'tgl_pinjam',
         'tgl_rencana_kembali',
+        'tgl_kembali ',
         'status'
     ];
 
@@ -32,8 +33,5 @@ class Peminjaman extends Model
         return $this->belongsTo(Alat::class, 'id_alat');
     }
 
-    public function kembali()
-    {
-        return $this->hasOne(Kembali::class, 'id_peminjaman');
-    }
+    
 }

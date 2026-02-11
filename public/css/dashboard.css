@@ -1,0 +1,87 @@
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f4f6f8;
+}
+
+/* SIDEBAR */
+.sidebar {
+    width: 220px;
+    height: 100vh;
+    background: #1f2937;
+    color: white;
+    position: fixed;
+}
+
+.sidebar h2 {
+    text-align: center;
+    padding: 16px;
+    margin: 0;
+    background: #111827;
+}
+
+.sidebar a {
+    display: block;
+    padding: 12px 16px;
+    color: white;
+    text-decoration: none;
+}
+
+.sidebar a:hover {
+    background: #374151;
+}
+
+/* CONTENT */
+.content {
+    margin-left: 220px;
+    padding: 20px;
+}
+
+/* CARD */
+.card {
+    background: white;
+    padding: 16px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+/* TABLE */
+table {
+    width: 100%;
+    background: white;
+    border-collapse: collapse;
+}
+
+th, td {
+    padding: 10px;
+    border: 1px solid #ddd;
+}
+
+th {
+    background: #e5e7eb;
+}
+
+/* STATUS */
+.status {
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 12px;
+    color: white;
+}
+
+.pending { background: #f59e0b; }
+.pinjam  { background: #2563eb; }
+.kembali { background: #16a34a; }
+
+/* BUTTON */
+button {
+    padding: 6px 10px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.btn-kembali {
+    background: #dc2626;
+    color: white;
+}

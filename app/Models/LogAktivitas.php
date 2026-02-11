@@ -4,19 +4,21 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Log extends Model
+class LogAktivitas extends Model
 {
     protected $table = 'log';
     protected $primaryKey = 'id_log';
 
     public $timestamps = false;
+    // const CREATED_AT = 'create_at';
+    // const UPDATED_AT = null;
 
     protected $fillable = [
         'id_user',
         'aktivitas',
         'target_tabel',
         'id_target',
-        'create'
+        'create_at',
     ];
 
     public function user()

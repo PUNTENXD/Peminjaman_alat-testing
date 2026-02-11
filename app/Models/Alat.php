@@ -9,9 +9,9 @@ class Alat extends Model
     protected $table = 'alat';
     protected $primaryKey = 'id_alat';
 
-    public $timestamps = true;
+    public $timestamps = false;
     const CREATED_AT = 'create_at';
-    const UPDATED_AT = 'updated_at';
+    const UPDATED_AT = 'update_at';
 
     protected $fillable = [
         'id_kategori',
