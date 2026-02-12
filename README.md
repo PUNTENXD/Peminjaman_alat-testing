@@ -1,4 +1,5 @@
 test
+testestestestestestest
 stuktur table database
 
 users
@@ -61,3 +62,10 @@ create              Timestamp
 relasi
 set null
 cascade
+
+
+git clone https://github.com
+
+https://github.com/PUNTENXD/Peminjaman_alat-testing.git
+
+
