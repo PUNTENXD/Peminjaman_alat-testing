@@ -35,9 +35,9 @@ id_peminjaman       BIGINT PK
 id_user             BIGINT FK
 id_alat             BIGINT FK
 jumlah              INT
-tgl_pinjam          DATE
+tgl_pinjam          DATEtime
 tgl_rencana_kembali DATE
-tgl_kembali         DATE
+tgl_kembali         Datetime
 status              ENUM(pending, pinjam, kembali)
 create_at          Timestamp
 update_at         Timestamp
