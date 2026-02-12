@@ -23,7 +23,8 @@
     </select>
 
     <label>Jumlah</label>
-    <input type="number" name="jumlah">
+    <input type="number" name="jumlah" min="1" required>
+
 
     <br><br>
     <button class="btn btn-add">Simpan</button>

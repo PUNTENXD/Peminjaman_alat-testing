@@ -4,26 +4,32 @@ namespace App\Http\Controllers;
 
 use App\Models\Peminjaman;
 use App\Models\Alat;
-use App\Models\LogAktivitas;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class PeminjamanController extends Controller
 {
     /*
     |--------------------------------------------------------------------------
-    | INDEX (ADMIN & PETUGAS)
+    | INDEX
     |--------------------------------------------------------------------------
     */
-    public function index()
-    {
-        $data = Peminjaman::with(['user','alat'])
-            ->orderBy('id_peminjaman','desc')
-            ->get();
+    public function index(Request $request)
+{
+    $query = Peminjaman::with(['user','alat'])
+        ->whereIn('status', ['pending','pinjam'])
+        ->orderBy('id_peminjaman','desc');
 
-        return view('peminjaman.index', compact('data'));
+    if ($request->filter === 'terlambat') {
+        $query->where('status','pinjam')
+              ->whereDate('tgl_rencana_kembali','<', now());
     }
+
+    $data = $query->get();
+
+    return view('peminjaman.index', compact('data'));
+}
+
 
     /*
     |--------------------------------------------------------------------------
@@ -37,7 +43,7 @@ class PeminjamanController extends Controller
             ->firstOrFail();
 
         if ($peminjaman->status !== 'pending') {
-            abort(403, 'Hanya data pending yang bisa diedit');
+            abort(403);
         }
 
         $alat = Alat::all();
@@ -51,49 +57,62 @@ class PeminjamanController extends Controller
     |--------------------------------------------------------------------------
     */
     public function update(Request $request, $id)
-{
-    $peminjaman = Peminjaman::where('id_peminjaman', $id)
-        ->firstOrFail();
+    {
+        $peminjaman = Peminjaman::findOrFail($id);
 
-    if ($peminjaman->status !== 'pending') {
-        abort(403, 'Data tidak bisa diedit');
-    }
-
-    $request->validate([
-        'id_alat' => 'required|exists:alat,id_alat',
-        'jumlah' => 'required|integer|min:1',
-        'tgl_pinjam' => 'required|date',
-        'tgl_rencana_kembali' => 'required|date|after_or_equal:tgl_pinjam'
-    ]);
-
-    DB::transaction(function () use ($request, $peminjaman) {
-
-        $alatBaru = Alat::findOrFail($request->id_alat);
-
-        // 🔥 CEK STOK
-        if ($request->jumlah > $alatBaru->stok) {
-            abort(400, 'Jumlah melebihi stok tersedia');
+        if ($peminjaman->status !== 'pending') {
+            abort(403);
         }
 
-        $peminjaman->update([
-            'id_alat' => $request->id_alat,
-            'jumlah' => $request->jumlah,
-            'tgl_pinjam' => $request->tgl_pinjam,
-            'tgl_rencana_kembali' => $request->tgl_rencana_kembali
+        $request->validate([
+            'id_alat' => 'required|exists:alat,id_alat',
+            'jumlah' => 'required|integer|min:1',
+            'tgl_pinjam' => 'required|date|after_or_equal:today',
+            'tgl_rencana_kembali' => 'required|date|after:tgl_pinjam'
         ]);
 
-        LogAktivitas::create([
-            'id_user' => Auth::id(),
-            'aktivitas' => 'Edit data peminjaman',
-            'target_tabel' => 'peminjaman',
-            'id_target' => $peminjaman->id_peminjaman
-        ]);
-    });
+        DB::transaction(function () use ($request, $peminjaman) {
 
-    return redirect()->route('peminjaman.index')
-        ->with('success','Data berhasil diperbarui');
-}
+            $alatLama = Alat::findOrFail($peminjaman->id_alat);
+            $alatBaru = Alat::findOrFail($request->id_alat);
 
+            $jumlahLama = $peminjaman->jumlah;
+            $jumlahBaru = $request->jumlah;
+
+            if ($alatLama->id_alat == $alatBaru->id_alat) {
+
+                $selisih = $jumlahBaru - $jumlahLama;
+
+                if ($selisih > 0 && $alatBaru->stok < $selisih) {
+                    abort(400,'Stok tidak mencukupi');
+                }
+
+                $alatBaru->stok -= $selisih;
+                $alatBaru->save();
+            } else {
+
+                $alatLama->stok += $jumlahLama;
+                $alatLama->save();
+
+                if ($alatBaru->stok < $jumlahBaru) {
+                    abort(400,'Stok alat baru tidak mencukupi');
+                }
+
+                $alatBaru->stok -= $jumlahBaru;
+                $alatBaru->save();
+            }
+
+            $peminjaman->update([
+                'id_alat' => $request->id_alat,
+                'jumlah' => $jumlahBaru,
+                'tgl_pinjam' => $request->tgl_pinjam,
+                'tgl_rencana_kembali' => $request->tgl_rencana_kembali
+            ]);
+        });
+
+        return redirect()->route('peminjaman.index')
+            ->with('success','Data berhasil diperbarui');
+    }
 
     /*
     |--------------------------------------------------------------------------
@@ -104,7 +123,7 @@ class PeminjamanController extends Controller
     {
         DB::transaction(function () use ($id) {
 
-            $p = Peminjaman::where('id_peminjaman', $id)->firstOrFail();
+            $p = Peminjaman::findOrFail($id);
 
             if ($p->status !== 'pending') {
                 abort(403);
@@ -113,13 +132,14 @@ class PeminjamanController extends Controller
             $alat = Alat::findOrFail($p->id_alat);
 
             if ($alat->stok < $p->jumlah) {
-                abort(400, 'Stok tidak cukup');
+                abort(400,'Stok tidak cukup');
             }
 
             $alat->stok -= $p->jumlah;
             $alat->save();
 
             $p->status = 'pinjam';
+            $p->tgl_pinjam = now();
             $p->save();
         });
 
@@ -128,7 +148,7 @@ class PeminjamanController extends Controller
 
     /*
     |--------------------------------------------------------------------------
-    | KEMBALIKAN
+    | KEMBALI
     |--------------------------------------------------------------------------
     */
     public function kembali($id)
@@ -143,25 +163,16 @@ class PeminjamanController extends Controller
 
         $alat = Alat::findOrFail($p->id_alat);
 
-        // Kembalikan stok
         $alat->stok += $p->jumlah;
         $alat->save();
 
-        // Update status + tanggal kembali
         $p->status = 'kembali';
-        $p->tgl_kembali = now(); // 🔥 INI YANG PENTING
+        $p->tgl_kembali = now(); // simpan datetime asli
         $p->save();
-
-        LogAktivitas::create([
-            'id_user' => Auth::id(),
-            'aktivitas' => 'Pengembalian alat',
-            'target_tabel' => 'peminjaman',
-            'id_target' => $p->id_peminjaman,
-            'create_at' => now()
-        ]);
     });
 
-    return back()->with('success','Alat berhasil dikembalikan');
+    return redirect()->route('kembali.index')
+        ->with('success','Alat berhasil dikembalikan');
 }
 
 }

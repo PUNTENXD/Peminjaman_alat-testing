@@ -39,19 +39,32 @@ class AlatController extends Controller
     |--------------------------------------------------------------------------
     */
     public function store(Request $request)
-    {
-        $request->validate([
-            'id_kategori' => 'required',
-            'nama_alat' => 'required|max:100',
-            'stok' => 'required|numeric|min:0',
-            'kondisi' => 'required|max:50'
-        ]);
+{
+    $request->validate([
+        'id_kategori' => 'required',
+        'nama_alat'   => 'required|max:100',
+        'stok'        => 'required|integer',
+        'kondisi'     => 'required|max:50'
+    ]);
 
-        Alat::create($request->all());
+    // NORMALISASI STOK
+    $stok = (int) $request->stok;
 
-        return redirect()->route('alat.index')
-            ->with('success','Data alat berhasil ditambahkan');
+    if ($stok <= 1) {
+        $stok = 1;
     }
+
+    Alat::create([
+        'id_kategori' => $request->id_kategori,
+        'nama_alat'   => $request->nama_alat,
+        'stok'        => $stok,
+        'kondisi'     => $request->kondisi,
+    ]);
+
+    return redirect()->route('alat.index')
+        ->with('success','Data alat berhasil ditambahkan');
+}
+
 
     /*
     |--------------------------------------------------------------------------

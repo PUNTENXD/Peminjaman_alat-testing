@@ -10,12 +10,12 @@ class UserController extends Controller
     public function index()
     {
         $users = User::orderBy('id_user','desc')->get();
-        return view('user.index', compact('users'));
+        return view('User.index', compact('users'));
     }
 
     public function create()
     {
-        return view('user.create');
+        return view('User.create');
     }
 
     public function store(Request $request)
@@ -38,7 +38,7 @@ class UserController extends Controller
     public function edit($id)
     {
         $user = User::findOrFail($id);
-        return view('user.edit', compact('user'));
+        return view('User.edit', compact('user'));
     }
 
     public function update(Request $request, $id)

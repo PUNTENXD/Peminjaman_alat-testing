@@ -109,6 +109,10 @@ body {
 }
 </style>
 
+
+@stack('styles')
+
+
 </head>
 <body>
 

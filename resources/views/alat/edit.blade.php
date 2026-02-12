@@ -1,4 +1,4 @@
-@extends('layouts.admin')
+@extends('Layouts.admin')
 
 @section('content')
 
@@ -39,10 +39,14 @@
             {{-- Stok --}}
             <div style="margin-bottom:20px;">
                 <label style="font-weight:600;">Stok</label>
-                <input type="number" name="stok"
-                       value="{{ $alat->stok }}" required
-                       style="width:100%;padding:10px;margin-top:5px;
-                              border:1px solid #ddd;border-radius:6px;">
+                <input type="number"
+       name="stok"
+       min="1"
+       value="1"
+       required
+       style="width:100%;padding:10px;margin-top:5px;
+              border:1px solid #ddd;border-radius:6px;">
+
             </div>
 
             {{-- Kondisi --}}

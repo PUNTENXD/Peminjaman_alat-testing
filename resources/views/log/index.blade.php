@@ -1,4 +1,4 @@
-@extends('layouts.admin')
+@extends('Layouts.admin')
 
 @section('content')
 <h1>Log Aktivitas</h1>

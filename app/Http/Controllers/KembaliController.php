@@ -3,58 +3,22 @@
 namespace App\Http\Controllers;
 
 use App\Models\Peminjaman;
-use App\Models\Alat;
-use App\Models\LogAktivitas;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
 
 class KembaliController extends Controller
 {
-
-public function index()
-{
-    $data = \App\Models\Peminjaman::with(['user','alat'])
-        ->where('status', 'kembali')
-        ->orderBy('update_at','desc')
-        ->get();
-
-    return view('kembali.index', compact('data'));
-}
-
-
-
-
-    public function store($id_peminjaman)
+    public function index(Request $request)
     {
-        DB::transaction(function () use ($id_peminjaman) {
+        $query = Peminjaman::with(['user','alat'])
+            ->where('status','kembali')
+            ->orderBy('tgl_kembali','desc');
 
-            // 1️⃣ Ambil data peminjaman
-            $peminjaman = Peminjaman::findOrFail($id_peminjaman);
+        if ($request->filter === 'terlambat') {
+            $query->whereColumn('tgl_kembali','>','tgl_rencana_kembali');
+        }
 
-            // 2️⃣ Validasi status (UKK CLEAN)
-            if ($peminjaman->status !== 'pinjam') {
-                abort(403, 'Peminjaman tidak valid untuk dikembalikan');
-            }
+        $data = $query->get();
 
-            // 3️⃣ Tambah stok alat
-            $alat = Alat::findOrFail($peminjaman->id_alat);
-            $alat->stok += $peminjaman->jumlah;
-            $alat->save();
-
-            // 4️⃣ Update status
-            $peminjaman->status = 'kembali';
-            $peminjaman->save();
-
-            // 5️⃣ Log aktivitas
-            LogAktivitas::create([
-                'id_user' => Auth::id(),
-                'aktivitas' => 'Mengembalikan alat',
-                'target_tabel' => 'peminjaman',
-                'id_target' => $peminjaman->id_peminjaman,
-                'create_at' => now()
-            ]);
-        });
-
-        return redirect()->back()->with('success', 'Pengembalian berhasil');
+        return view('kembali.index', compact('data'));
     }
 }

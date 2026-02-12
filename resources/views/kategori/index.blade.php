@@ -1,4 +1,4 @@
-@extends('layouts.admin')
+@extends('Layouts.admin')
 
 @section('content')
 
@@ -39,6 +39,7 @@
                 <tr>
                     <th width="10%">No</th>
                     <th>Nama Kategori</th>
+                    <th>Aksi</th>
                 </tr>
             </thead>
             <tbody>
@@ -46,6 +47,27 @@
                 <tr>
                     <td>{{ $loop->iteration }}</td>
                     <td>{{ $k->nama_kategori }}</td>
+
+                     <td>
+    <a href="{{ route('kategori.edit', $k->id_kategori) }}"
+       class="btn btn-warning btn-sm">Edit</a>
+
+    <form action="{{ route('kategori.destroy', $k->id_kategori) }}"
+          method="POST"
+          style="display:inline;">
+        @csrf
+        @method('DELETE')
+        <button type="submit"
+                class="btn btn-danger btn-sm"
+                onclick="return confirm('Yakin ingin menghapus kategori ini?')">
+            Hapus
+        </button>
+    </form>
+</td>
+
+
+
+
                 </tr>
                 @empty
                 <tr>

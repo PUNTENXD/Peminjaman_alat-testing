@@ -15,8 +15,6 @@ public function index()
 }
 
 
-
-
     // simpan kategori baru
     public function store(Request $request)
 {
@@ -29,6 +27,47 @@ public function index()
     ]);
 
     return redirect()->back()->with('success','Kategori berhasil ditambahkan');
+
 }
+
+
+// form edit
+public function edit($id)
+{
+    $kategori = Kategori::findOrFail($id);
+    return view('kategori.edit', compact('kategori'));
+}
+
+// update kategori
+public function update(Request $request, $id)
+{
+    $request->validate([
+        'nama_kategori' => 'required'
+    ]);
+
+    $kategori = Kategori::findOrFail($id);
+    $kategori->update([
+        'nama_kategori' => $request->nama_kategori
+    ]);
+
+    return redirect()->route('kategori.index')
+        ->with('success', 'Kategori berhasil diupdate');
+}
+
+// hapus kategori
+public function destroy($id)
+{
+    try {
+        $kategori = Kategori::findOrFail($id);
+        $kategori->delete();
+
+        return redirect()->back()
+            ->with('success', 'Kategori berhasil dihapus');
+    } catch (\Exception $e) {
+        return redirect()->back()
+            ->with('error', 'Kategori tidak bisa dihapus karena masih digunakan oleh data alat');
+    }
+}
+
 
 }

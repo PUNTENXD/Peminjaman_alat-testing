@@ -1,4 +1,4 @@
-@extends('layouts.peminjam')
+@extends('Layouts.peminjam')
 
 
 @section('content')

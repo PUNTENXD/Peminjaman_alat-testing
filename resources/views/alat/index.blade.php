@@ -1,4 +1,4 @@
-@extends('layouts.admin')
+@extends('Layouts.admin')
 
 @section('content')
 <h1>Data Alat</h1>

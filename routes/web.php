@@ -105,6 +105,20 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/kategori', [KategoriController::class, 'store'])
             ->name('kategori.store');
 
+
+            // Edit form
+        Route::get('/kategori/{id}/edit', [KategoriController::class, 'edit'])
+            ->name('kategori.edit');
+
+        // Update
+        Route::put('/kategori/{id}', [KategoriController::class, 'update'])
+            ->name('kategori.update');
+
+        // Delete
+        Route::delete('/kategori/{id}', [KategoriController::class, 'destroy'])
+            ->name('kategori.destroy');
+
+
         // Log Aktivitas
         Route::get('/log', [LogAktivitasController::class, 'index'])
             ->name('log.index');

@@ -2,7 +2,7 @@
 
 @section('content')
 
-<h2 style="text-align:center;">Tambah User</h2>
+<h2 style="text-align:center;">Edit Kategori</h2>
 
 {{-- NOTIFIKASI SUCCESS --}}
 @if(session('success'))
@@ -13,37 +13,20 @@
 
 <div class="form-wrapper">
 
-    <form method="POST" action="/user">
+    <form method="POST" action="{{ route('kategori.update', $kategori->id_kategori) }}">
         @csrf
+        @method('PUT')
 
         <div class="form-group">
-            <label>Username</label>
+            <label>Nama Kategori</label>
             <input type="text"
-                   name="username"
-                   placeholder="Masukkan username"
+                   name="nama_kategori"
+                   value="{{ $kategori->nama_kategori }}"
                    required>
         </div>
 
-        <div class="form-group">
-            <label>Password</label>
-            <input type="password"
-                   name="password"
-                   placeholder="Masukkan password"
-                   required>
-        </div>
-
-        <div class="form-group">
-            <label>Role</label>
-            <select name="role" required>
-                <option value="">-- Pilih Role --</option>
-                <option value="admin">Admin</option>
-                <option value="petugas">Petugas</option>
-                <option value="peminjam">Peminjam</option>
-            </select>
-        </div>
-
-        <button type="submit" class="btn-save">
-            Simpan User
+        <button type="submit" class="btn-update">
+            Update Kategori
         </button>
 
     </form>
@@ -76,26 +59,24 @@
     font-weight: 600;
 }
 
-.form-group input,
-.form-group select {
+.form-group input {
     padding: 8px 10px;
     border-radius: 6px;
     border: 1px solid #ccc;
     transition: 0.3s;
 }
 
-.form-group input:focus,
-.form-group select:focus {
+.form-group input:focus {
     outline: none;
-    border-color: #16a34a;
+    border-color: #2563eb;
 }
 
 /* ===== BUTTON ===== */
 
-.btn-save {
+.btn-update {
     width: 100%;
     padding: 10px;
-    background: #16a34a;
+    background: #2563eb;
     color: white;
     border: none;
     border-radius: 6px;
@@ -103,8 +84,8 @@
     transition: 0.3s;
 }
 
-.btn-save:hover {
-    background: #15803d;
+.btn-update:hover {
+    background: #1d4ed8;
 }
 
 /* ===== SUCCESS ALERT ===== */

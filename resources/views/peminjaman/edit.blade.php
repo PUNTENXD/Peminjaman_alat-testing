@@ -1,4 +1,4 @@
-@extends('layouts.admin')
+@extends('Layouts.admin')
 
 @section('content')
 
@@ -31,26 +31,32 @@
 
             <div class="form-group">
                 <label>Jumlah</label>
-                <input type="number" 
-                       name="jumlah"
-                       value="{{ $peminjaman->jumlah }}"
-                       required>
+                <input type="number"
+       name="jumlah"
+       min="1"
+       value="{{ $peminjaman->jumlah }}"
+       required>
+
             </div>
 
             <div class="form-group">
                 <label>Tanggal Pinjam</label>
                 <input type="date"
-                       name="tgl_pinjam"
-                       value="{{ $peminjaman->tgl_pinjam }}"
-                       required>
+       name="tgl_pinjam"
+       min="{{ date('Y-m-d') }}"
+       value="{{ $peminjaman->tgl_pinjam }}"
+       required>
+
             </div>
 
             <div class="form-group">
                 <label>Rencana Kembali</label>
                 <input type="date"
-                       name="tgl_rencana_kembali"
-                       value="{{ $peminjaman->tgl_rencana_kembali }}"
-                       required>
+       name="tgl_rencana_kembali"
+       min="{{ date('Y-m-d') }}"
+       value="{{ $peminjaman->tgl_rencana_kembali }}"
+       required>
+
             </div>
 
             <button type="submit" class="btn-submit">
