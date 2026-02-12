@@ -51,20 +51,29 @@ class PeminjamanController extends Controller
     |--------------------------------------------------------------------------
     */
     public function update(Request $request, $id)
-    {
-        $peminjaman = Peminjaman::where('id_peminjaman', $id)
-            ->firstOrFail();
+{
+    $peminjaman = Peminjaman::where('id_peminjaman', $id)
+        ->firstOrFail();
 
-        if ($peminjaman->status !== 'pending') {
-            abort(403, 'Data tidak bisa diedit');
+    if ($peminjaman->status !== 'pending') {
+        abort(403, 'Data tidak bisa diedit');
+    }
+
+    $request->validate([
+        'id_alat' => 'required|exists:alat,id_alat',
+        'jumlah' => 'required|integer|min:1',
+        'tgl_pinjam' => 'required|date',
+        'tgl_rencana_kembali' => 'required|date|after_or_equal:tgl_pinjam'
+    ]);
+
+    DB::transaction(function () use ($request, $peminjaman) {
+
+        $alatBaru = Alat::findOrFail($request->id_alat);
+
+        // 🔥 CEK STOK
+        if ($request->jumlah > $alatBaru->stok) {
+            abort(400, 'Jumlah melebihi stok tersedia');
         }
-
-        $request->validate([
-            'id_alat' => 'required',
-            'jumlah' => 'required|numeric|min:1',
-            'tgl_pinjam' => 'required|date',
-            'tgl_rencana_kembali' => 'required|date'
-        ]);
 
         $peminjaman->update([
             'id_alat' => $request->id_alat,
@@ -79,10 +88,12 @@ class PeminjamanController extends Controller
             'target_tabel' => 'peminjaman',
             'id_target' => $peminjaman->id_peminjaman
         ]);
+    });
 
-        return redirect()->route('peminjaman.index')
-            ->with('success','Data berhasil diperbarui');
-    }
+    return redirect()->route('peminjaman.index')
+        ->with('success','Data berhasil diperbarui');
+}
+
 
     /*
     |--------------------------------------------------------------------------
