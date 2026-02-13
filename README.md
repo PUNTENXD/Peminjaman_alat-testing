@@ -109,15 +109,46 @@ kategori belum bisa dihapus, karena disuruh membuat CRUD jadi minimal kategoriny
 halaman tambah alat:
 buat rules stok tidak bisa trigger kalau <=1 , contoh admin memasukkan -2 akan otomatis menjadi 1  (sudah)
 
+
+
+
+
+Belum____________________________________________________
+
 halaman peminjaman:
 durasi < 1 = 0, atau  kalau bisa buat per jam
- 
+
+hilangkan keterangan Kembali di table data peminjaman.
+keterangan harus punya fungsi yang jelas.
+denda akan secara otomatis terakumulasi di table denda setiap lewat 1 hari + 5000, dan kalau denda tidak memenuhi syarat akan penambahan akan tetap 0.
+
+tambahkan rules:
+		maximal durasi peminjaman 7 hari
+		
+
+
+
+saat mengubah value stok ada beberapa rules:
+	tidak bisa melebihi stok yang ada -> ada peringatan
+	tidak bisa mengubah value stok menjadi <1
+	
+
+
+
+
+
+
+
 
 halaman edit peminjaman:
-saat di tambah jumlah pinjamannnya stoknya malah tidak berkurang dan tidak ada Batasan peminjaman jadinya bisa meminjam melebihi stok yang tersedia
+saat di tambah jumlah pinjamannnya stoknya malah tidak berkurang dan tidak ada Batasan peminjaman jadinya bisa meminjam melebihi stok yang tersedia (sudah)
 
 lalu ada juga tanggal pinjam  dan rencana Kembali yang kurang rules
 seharusnya Ketika tanggal dibawah hari ini gak bisa diclick (sudah)
+
+
+
+
 
 
 
@@ -125,9 +156,20 @@ halaman Kembali:
 data tanggal Kembali tidak tercatat, tambah detail jam pada saat click pinjam, dan saat click kembali (sudah)
 CATATAN: tabel peminjaman tgl_kembali diubah jadi DATETIME
 
-
-
 tambahkan denda, keterlambatan, durasi (sudah)
+
+
+
+
+belum________________________________________________
+
+tambahkan denda di table.
+tambahkan keterangan terlambat di tabel dan isinya menghitug berapa hari terlambat kalau tidak memenuhi persyaratan isnya akan tetap "0 hari" ini jug harus diterapkan di halaman pantau dashboard petugas
+
+
+
+
+
 
 
 
@@ -145,15 +187,15 @@ menggunakan trigger untuk manambahkan log, semisal saat click atau ada perubahan
 Petugas dashboard
 
 halaman Pantau peminjaman:
-belum ada keterangan tanggal pinjam, tanggal rencana Kembali, keterangan jam, denda, dan keterlambatan, yah isinya mirip dengan halaman peminjaman yang ada di dashboard admin
+belum ada keterangan tanggal pinjam, tanggal rencana Kembali, keterangan jam, denda, dan keterlambatan, yah isinya mirip dengan halaman peminjaman yang ada di dashboard admin (sudah)
 
 
 semua halaman:
-ubah nama sidebar data pengembalian menjadi laporan
+ubah nama sidebar data pengembalian menjadi laporan 
 
 
 halaman dashboard:
-pada tabel tgl Pinjam keterangan jamnya masih belum benar
+pada tabel tgl Pinjam keterangan jamnya masih belum benar (lumayan tapi masih perlu penyesuaian)
 
 
 
@@ -164,10 +206,10 @@ Peminjam dashboard
 halaman dashboard bagian daftar alat:
 saat tekan pinjam hasilnya 
     403
-Akses ditolak 
+Akses ditolak (sudah)
 
 
-pebarui dashboard agar lebih mudah dimengerti
+perbarui dashboard agar lebih mudah dimengerti
 
 
 opsionl fitur:
@@ -175,10 +217,131 @@ tambahkan fitur batalkan peminjaman hanya saat status pending
 
 
 
+gini saja pada halaman dashboard kita berikan daftar alat dan tombol pinjam yang akan memunculkan pop up untu mengisi data peminjaman, kalau bentunya begini kan UI nya jadi lebih bersih
+
+tambahkan halaman daftar peminjaman, didalanya ada data keterangan peminjaman dari sudut pandang peminjam seperti no, nama buku, tanggal pinjam, janggal rencana Kembali (atau ini kita jadikan durasi pinjam, nanti mentukany missal "7 hari"), status
+
+
+tambahkan juga halaman history pengembalian yang berisi data peminjaman yang sudah selesai dari sudut pandang peminjam ya
+
+
+Kalau mau next level lagi, kita bisa:
+
+Tambah filter kategori
+
+Tambah search
+
+Tambah pagination
+
+Tambah notifikasi toast
 
 
 
 
+
+
+
+pengalaman user
+
+
+user UI perbaiki semuanya
+
+bagian peminjaman buku UI nya diperjelas dengan banyak fungsi dan filter
+
+status:
+	Pending orange
+	pinjam biru
+	Kembali hijau
+
+
+
+password minimal 8 digit
+status tengah
+denda/number kanan 
+
+
+
+5. Transaction (Commit & Rollback)
+Ini adalah fitur untuk menjaga keamanan data jika terjadi error di tengah jalan.
+
+    Konsep: Anggap kamu sedang proses pinjam alat. Step 1: Input data pinjam. Step 2: Kurangi stok alat. Jika Step 2 gagal (laptop mati/error), maka Step 1 harus dibatalkan.
+    Commit: Menyimpan perubahan secara permanen (jika semua step berhasil).
+    Rollback: Membatalkan semua perubahan (jika ada salah satu step yang gagal).
+
+
+
+
+
+
+
+
+
+
+
+
+public function store(Request $request)
+{
+    // 1. Validasi Input
+    $request->validate([
+        'alat_id' => 'required|exists:alats,id',
+        'jumlah' => 'required|integer|min:1',
+    ]);
+
+    $alat = Alat::findOrFail($request->alat_id);
+
+    // 2. Cek Stok (Keamanan tambahan)
+    if ($alat->stok < $request->jumlah) {
+        return back()->with('error', 'Stok tidak mencukupi!');
+    }
+
+    // 3. Gunakan Database Transaction
+    DB::beginTransaction();
+    try {
+        // Step A: Catat Peminjaman
+        Peminjaman::create([
+            'user_id' => auth()->id(),
+            'alat_id' => $request->alat_id,
+            'jumlah'  => $request->jumlah,
+            'status'  => 'dipinjam',
+            'tgl_pinjam' => now(),
+        ]);
+
+        // Step B: Kurangi Stok Alat
+        $alat->decrement('stok', $request->jumlah);
+
+        // Jika semua OK, Simpan!
+        DB::commit();
+        return redirect()->route('peminjaman.index')->with('success', 'Berhasil meminjam!');
+
+    } catch (\Exception $e) {
+        // Jika ada error (misal: database mati mendadak), Batalkan semua!
+        DB::rollBack();
+        return back()->with('error', 'Terjadi kesalahan, coba lagi.');
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ls resources/views
 
 
 cd nama-folder-project
@@ -220,6 +383,9 @@ Y
 Enter
 
 git push origin main
+
+
+
 
 
 
