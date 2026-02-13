@@ -36,6 +36,15 @@
     </div>
 </div>
 
+
+<div style="margin-bottom:15px;padding:12px;background:#fef3c7;border:1px solid #f59e0b;border-radius:6px;">
+    <strong>Total Akumulasi Denda: </strong>
+    Rp {{ number_format($totalDenda,0,',','.') }}
+</div>
+
+
+
+
 <div class="content">
 <h1>Pantau Peminjaman</h1>
 
@@ -45,25 +54,63 @@
     <th>Peminjam</th>
     <th>Alat</th>
     <th>Jumlah</th>
+    <th>Tgl Pinjam</th>
+    <th>Tgl Rencana</th>
     <th>Status</th>
+    <th>Terlambat</th>
+    <th>Denda</th>
     <th>Aksi</th>
 </tr>
 
+
 @forelse($data as $item)
-<tr>
+<tr style="{{ $item->status_terlambat ? 'background:#fee2e2;' : '' }}">
     <td>{{ $loop->iteration }}</td>
     <td>{{ $item->user->username }}</td>
     <td>{{ $item->alat->nama_alat }}</td>
     <td>{{ $item->jumlah }}</td>
-    <td>{{ strtoupper($item->status) }}</td>
+
+  <td>
+    {{ $item->tgl_pinjam->format('d-m-Y H:i') }}
+</td>
+
+<td>
+    {{ \Carbon\Carbon::parse($item->tgl_rencana_kembali)->format('d-m-Y') }}
+</td>
+
+<td>
+    @if($item->tgl_kembali)
+        {{ $item->tgl_kembali->format('d-m-Y H:i') }}
+    @else
+        -
+    @endif
+</td>
+
+
+    <td>
+        @if($item->hari_terlambat > 0)
+            {{ $item->hari_terlambat }} Hari
+        @else
+            -
+        @endif
+    </td>
+
+    <td>
+        @if($item->denda > 0)
+            Rp {{ number_format($item->denda,0,',','.') }}
+        @else
+            -
+        @endif
+    </td>
+
     <td>
         @if($item->status == 'pending')
-            <form action="{{ route('peminjaman.acc',$item->id_peminjaman) }}" method="POST">
+            <form action="{{ route('petugas.acc',$item->id_peminjaman) }}" method="POST">
                 @csrf
                 <button class="btn-acc">ACC</button>
             </form>
         @elseif($item->status == 'pinjam')
-            <form action="{{ route('peminjaman.kembali',$item->id_peminjaman) }}" method="POST">
+            <form action="{{ route('petugas.kembali',$item->id_peminjaman) }}" method="POST">
                 @csrf
                 <button class="btn-kembali">Kembalikan</button>
             </form>
@@ -73,7 +120,7 @@
     </td>
 </tr>
 @empty
-<tr><td colspan="6">Tidak ada data</td></tr>
+<tr><td colspan="10">Tidak ada data</td></tr>
 @endforelse
 
 </table>

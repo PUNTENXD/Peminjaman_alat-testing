@@ -10,7 +10,9 @@ class User extends Authenticatable
 
     protected $primaryKey = 'id_user';
 
-    public $timestamps = true;
+    public $incrementing = true;
+
+    protected $keyType = 'int';
 
     const CREATED_AT = 'create_at';
     const UPDATED_AT = 'update_at';
@@ -22,6 +24,7 @@ class User extends Authenticatable
     ];
 
     protected $hidden = [
-        'password',
+        'password'
     ];
 }
+

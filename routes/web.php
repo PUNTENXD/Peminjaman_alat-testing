@@ -1,6 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
+
 use App\Http\Controllers\KategoriController;
 use App\Http\Controllers\PeminjamanController;
 use App\Http\Controllers\KembaliController;
@@ -9,7 +11,8 @@ use App\Http\Controllers\AdminDashboardController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\UserDashboardController;
-use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\PetugasDashboardController;
+use App\Http\Controllers\AlatController;
 
 /*
 |--------------------------------------------------------------------------
@@ -20,6 +23,7 @@ use Illuminate\Support\Facades\Auth;
 Route::get('/', function () {
     return view('welcome');
 });
+
 
 /*
 |--------------------------------------------------------------------------
@@ -35,7 +39,7 @@ Route::post('/login', [AuthenticatedSessionController::class, 'store'])
     ->name('login.store');
 
 Route::post('/logout', function () {
-   Auth::logout();
+    Auth::logout();
     request()->session()->invalidate();
     request()->session()->regenerateToken();
     return redirect('/login');
@@ -44,129 +48,75 @@ Route::post('/logout', function () {
 
 /*
 |--------------------------------------------------------------------------
-| AUTH REQUIRED
+| ADMIN AREA
 |--------------------------------------------------------------------------
 */
 
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth','role:admin'])
+    ->prefix('admin')
+    ->group(function () {
 
-    /*
-    |--------------------------------------------------------------------------
-    | PEMINJAMAN
-    |--------------------------------------------------------------------------
-    */
+    Route::get('/dashboard', [AdminDashboardController::class, 'index'])
+        ->name('admin.dashboard');
 
-    Route::get('/peminjaman', [PeminjamanController::class, 'index'])
-        ->name('peminjaman.index');
+    // ================= KATEGORI =================
+    Route::get('/kategori', [KategoriController::class, 'index'])
+        ->name('kategori.index');
 
-    Route::get('/peminjaman/{id}/edit', [PeminjamanController::class, 'edit'])
-        ->middleware('role:admin,petugas')
-        ->name('peminjaman.edit');
+    Route::post('/kategori', [KategoriController::class, 'store'])
+        ->name('kategori.store');
 
-    Route::post('/peminjaman/{id}/update', [PeminjamanController::class, 'update'])
-        ->middleware('role:admin,petugas')
-        ->name('peminjaman.update');
+    Route::get('/kategori/{id}/edit', [KategoriController::class, 'edit'])
+        ->name('kategori.edit');
 
-    Route::post('/peminjaman/{id}/acc', [PeminjamanController::class, 'acc'])
-        ->middleware('role:petugas')
-        ->name('peminjaman.acc');
+    Route::put('/kategori/{id}', [KategoriController::class, 'update'])
+        ->name('kategori.update');
 
-    Route::post('/peminjaman/{id}/kembali', [PeminjamanController::class, 'kembali'])
-        ->middleware('role:petugas')
-        ->name('peminjaman.kembali');
+    Route::delete('/kategori/{id}', [KategoriController::class, 'destroy'])
+        ->name('kategori.destroy');
 
+    // ================= ALAT =================
+    Route::get('/alat', [AlatController::class, 'index'])
+        ->name('alat.index');
 
-    /*
-    |--------------------------------------------------------------------------
-    | KEMBALI (ADMIN & PETUGAS)
-    |--------------------------------------------------------------------------
-    */
-
-    Route::get('/kembali', [KembaliController::class, 'index'])
-        ->middleware('role:admin,petugas')
-        ->name('kembali.index');
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | ADMIN AREA
-    |--------------------------------------------------------------------------
-    */
-
-    Route::middleware('role:admin')->group(function () {
-
-        Route::get('/admin/dashboard', [AdminDashboardController::class, 'index'])
-            ->name('admin.dashboard');
-
-        // Kategori
-        Route::get('/kategori', [KategoriController::class, 'index'])
-            ->name('kategori.index');
-
-        Route::post('/kategori', [KategoriController::class, 'store'])
-            ->name('kategori.store');
-
-
-            // Edit form
-        Route::get('/kategori/{id}/edit', [KategoriController::class, 'edit'])
-            ->name('kategori.edit');
-
-        // Update
-        Route::put('/kategori/{id}', [KategoriController::class, 'update'])
-            ->name('kategori.update');
-
-        // Delete
-        Route::delete('/kategori/{id}', [KategoriController::class, 'destroy'])
-            ->name('kategori.destroy');
-
-
-        // Log Aktivitas
-        Route::get('/log', [LogAktivitasController::class, 'index'])
-            ->name('log.index');
-
-        // User Management
-        Route::get('/user', [UserController::class, 'index'])
-            ->name('user.index');
-
-        Route::get('/user/create', [UserController::class, 'create'])
-            ->name('user.create');
-
-        Route::post('/user', [UserController::class, 'store'])
-            ->name('user.store');
-
-        Route::get('/user/{id}/edit', [UserController::class, 'edit'])
-            ->name('user.edit');
-
-        Route::post('/user/{id}', [UserController::class, 'update'])
-            ->name('user.update');
-
-        Route::post('/user/{id}/delete', [UserController::class, 'destroy'])
-            ->name('user.destroy');
-
-
-        // ===============================
-        // ALAT (ADMIN ONLY)
-        // ===============================
-
-        Route::get('/alat', [\App\Http\Controllers\AlatController::class, 'index'])
-         ->name('alat.index');
-
-        Route::get('/alat/create', [\App\Http\Controllers\AlatController::class, 'create'])
+    Route::get('/alat/create', [AlatController::class, 'create'])
         ->name('alat.create');
 
-        Route::post('/alat', [\App\Http\Controllers\AlatController::class, 'store'])
+    Route::post('/alat', [AlatController::class, 'store'])
         ->name('alat.store');
 
-        Route::get('/alat/{id}/edit', [\App\Http\Controllers\AlatController::class, 'edit'])
+    Route::get('/alat/{id}/edit', [AlatController::class, 'edit'])
         ->name('alat.edit');
 
-        Route::post('/alat/{id}/update', [\App\Http\Controllers\AlatController::class, 'update'])
+    Route::post('/alat/{id}/update', [AlatController::class, 'update'])
         ->name('alat.update');
 
-        Route::post('/alat/{id}/delete', [\App\Http\Controllers\AlatController::class, 'destroy'])
+    Route::post('/alat/{id}/delete', [AlatController::class, 'destroy'])
         ->name('alat.destroy');
 
+    // ================= USER MANAGEMENT =================
+    Route::get('/user', [UserController::class, 'index'])
+        ->name('user.index');
 
-    });
+    Route::get('/user/create', [UserController::class, 'create'])
+        ->name('user.create');
+
+    Route::post('/user', [UserController::class, 'store'])
+        ->name('user.store');
+
+    Route::get('/user/{id}/edit', [UserController::class, 'edit'])
+        ->name('user.edit');
+
+    Route::post('/user/{id}', [UserController::class, 'update'])
+        ->name('user.update');
+
+    Route::post('/user/{id}/delete', [UserController::class, 'destroy'])
+        ->name('user.destroy');
+
+    // ================= LOG =================
+    Route::get('/log', [LogAktivitasController::class, 'index'])
+        ->name('log.index');
+});
 
 
 /*
@@ -175,40 +125,88 @@ Route::middleware(['auth'])->group(function () {
 |--------------------------------------------------------------------------
 */
 
-Route::middleware('role:petugas')->group(function () {
+Route::middleware(['auth','role:petugas'])
+    ->prefix('petugas')
+    ->group(function () {
 
-    Route::get('/petugas/dashboard', [\App\Http\Controllers\PetugasDashboardController::class, 'index'])
+    Route::get('/dashboard', [PetugasDashboardController::class, 'index'])
         ->name('petugas.dashboard');
 
-    Route::get('/petugas/peminjaman', [\App\Http\Controllers\PetugasDashboardController::class, 'peminjaman'])
+    Route::get('/peminjaman', [PetugasDashboardController::class, 'peminjaman'])
         ->name('petugas.peminjaman');
 
-    Route::get('/petugas/pengembalian', [\App\Http\Controllers\PetugasDashboardController::class, 'pengembalian'])
+    Route::get('/pengembalian', [PetugasDashboardController::class, 'pengembalian'])
         ->name('petugas.pengembalian');
 
-    Route::get('/petugas/laporan', [\App\Http\Controllers\PetugasDashboardController::class, 'laporan'])
-    ->name('petugas.laporan');
+    Route::get('/laporan', [PetugasDashboardController::class, 'laporan'])
+        ->name('petugas.laporan');
 
-    // return view('petugas.laporan', compact('data','alat'));
+    Route::post('/peminjaman/{id}/acc', [PetugasDashboardController::class, 'acc'])
+        ->name('petugas.acc');
 
-
+    Route::post('/peminjaman/{id}/kembali', [PetugasDashboardController::class, 'kembalikan'])
+        ->name('petugas.kembali');
 });
 
 
+/*
+|--------------------------------------------------------------------------
+| PEMINJAM AREA
+|--------------------------------------------------------------------------
+*/
 
-Route::middleware(['auth','role:peminjam'])->group(function () {
+Route::middleware(['auth','role:peminjam'])
+    ->prefix('user')
+    ->group(function () {
 
-    Route::get('/user/dashboard', [UserDashboardController::class, 'index'])
+    Route::get('/dashboard', [UserDashboardController::class, 'index'])
         ->name('user.dashboard');
 
-    Route::post('/user/pinjam', [UserDashboardController::class, 'pinjam'])
+    Route::post('/pinjam', [UserDashboardController::class, 'pinjam'])
         ->name('user.pinjam');
 
-    Route::post('/user/kembali/{id}', [UserDashboardController::class, 'kembali'])
+    Route::post('/kembali/{id}', [UserDashboardController::class, 'kembali'])
         ->name('user.kembali');
+
+        Route::post('/batal/{id}', [UserDashboardController::class, 'batal'])
+    ->name('user.batal');
+
 });
 
 
+/*
+|--------------------------------------------------------------------------
+| PEMINJAMAN UMUM (ADMIN & PETUGAS)
+|--------------------------------------------------------------------------
+*/
+
+Route::middleware(['auth','role:admin,petugas'])->group(function () {
+
+    Route::get('/peminjaman', [PeminjamanController::class, 'index'])
+        ->name('peminjaman.index');
+
+    Route::get('/peminjaman/{id}/edit', [PeminjamanController::class, 'edit'])
+        ->name('peminjaman.edit');
+
+    Route::post('/peminjaman/{id}/update', [PeminjamanController::class, 'update'])
+        ->name('peminjaman.update');
+
+    Route::post('/peminjaman/{id}/acc', [PeminjamanController::class, 'acc'])
+        ->name('peminjaman.acc');
+
+    Route::post('/peminjaman/{id}/kembali', [PeminjamanController::class, 'kembali'])
+        ->name('peminjaman.kembali');
+});
 
 
+/*
+|--------------------------------------------------------------------------
+| KEMBALI (ADMIN & PETUGAS)
+|--------------------------------------------------------------------------
+*/
+
+Route::middleware(['auth','role:admin,petugas'])->group(function () {
+
+    Route::get('/kembali', [KembaliController::class, 'index'])
+        ->name('kembali.index');
 });

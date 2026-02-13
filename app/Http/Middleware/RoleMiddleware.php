@@ -17,9 +17,14 @@ class RoleMiddleware
         $userRole = strtolower(Auth::user()->role);
         $allowedRoles = array_map('strtolower', $roles);
 
-        if (!in_array($userRole, $allowedRoles)) {
-            abort(403, 'Akses ditolak');
-        }
+       if (!in_array($userRole, $allowedRoles)) {
+    dd([
+        'login_user' => Auth::user(),
+        'role_user' => $userRole,
+        'allowed_roles' => $allowedRoles
+    ]);
+}
+
 
         return $next($request);
     }

@@ -117,10 +117,9 @@ body {
        Pantau Peminjaman
     </a>
 
-    <a href="{{ route('petugas.pengembalian') }}"
-       class="{{ request()->routeIs('petugas.pengembalian') ? 'active' : '' }}">
-       Data Pengembalian
-    </a>
+   <a href="{{ route('petugas.pengembalian') }}">
+   Laporan
+</a>
 
     <a href="{{ route('petugas.laporan') }}"
        class="{{ request()->routeIs('petugas.laporan') ? 'active' : '' }}">

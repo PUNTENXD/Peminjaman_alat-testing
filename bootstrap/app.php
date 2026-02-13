@@ -15,11 +15,13 @@ return Application::configure(basePath: dirname(__DIR__))
     )
 
     // ✅ DAFTAR MIDDLEWARE
-    ->withMiddleware(function (Middleware $middleware) {
-        $middleware->alias([
-            'role' => RoleMiddleware::class,
-        ]);
-    })
+   ->withMiddleware(function (Middleware $middleware) {
+    $middleware->alias([
+        'auth' => \App\Http\Middleware\Authenticate::class,
+        'role' => \App\Http\Middleware\RoleMiddleware::class,
+    ]);
+})
+
 
     ->withExceptions(function (Exceptions $exceptions) {
         //

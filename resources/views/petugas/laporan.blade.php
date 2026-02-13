@@ -166,6 +166,14 @@ th{
 <!-- CETAK -->
 <button class="btn btn-cetak" onclick="window.print()">Cetak</button>
 
+
+
+<div style="margin-bottom:15px;padding:12px;background:#dbeafe;border:1px solid #2563eb;border-radius:6px;">
+    <strong>Total Denda Keseluruhan: </strong>
+    Rp {{ number_format($totalDenda,0,',','.') }}
+</div>
+
+
 <!-- TABLE -->
 <table>
 <tr>
@@ -174,8 +182,12 @@ th{
     <th>Alat</th>
     <th>Jumlah</th>
     <th>Tgl Pinjam</th>
-    <th>Tgl Rencana Kembali</th>
+    <th>Tgl Rencana</th>
     <th>Tgl Kembali</th>
+    <th>Terlambat</th>
+    <th>Denda</th>
+    <th>Keterangan</th>
+
 </tr>
 
 @forelse($data as $item)
@@ -184,15 +196,45 @@ th{
     <td>{{ $item->user->username }}</td>
     <td>{{ $item->alat->nama_alat }}</td>
     <td>{{ $item->jumlah }}</td>
-    <td>{{ $item->tgl_pinjam }}</td>
-    <td>{{ $item->tgl_rencana_kembali }}</td>
-    <td>{{ $item->tgl_kembali }}</td>
+
+    <td>{{ $item->tgl_pinjam->format('d-m-Y H:i') }}</td>
+
+<td>{{ \Carbon\Carbon::parse($item->tgl_rencana_kembali)->format('d-m-Y') }}</td>
+
+<td>
+    @if($item->tgl_kembali)
+        {{ $item->tgl_kembali->format('d-m-Y H:i') }}
+    @else
+        -
+    @endif
+</td>
+
+
+    <td>
+        @if($item->hari_terlambat > 0)
+            {{ $item->hari_terlambat }} Hari
+        @else
+            -
+        @endif
+    </td>
+
+    <td>
+    @if($item->hari_terlambat > 0)
+        Terlambat {{ $item->hari_terlambat }} hari
+        <br>
+        Denda: Rp {{ number_format($item->denda,0,',','.') }}
+    @else
+        Tepat Waktu
+    @endif
+</td>
+
+</td>
+
 </tr>
 @empty
-<tr>
-    <td colspan="7">Tidak ada data</td>
-</tr>
+<tr><td colspan="9">Tidak ada data</td></tr>
 @endforelse
+
 
 </table>
 

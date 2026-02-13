@@ -6,6 +6,9 @@ use Illuminate\Http\Request;
 use App\Models\Alat;
 use App\Models\Peminjaman;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
+
 
 class UserDashboardController extends Controller
 {
@@ -22,50 +25,88 @@ class UserDashboardController extends Controller
     }
 
     public function pinjam(Request $request)
-    {
-        $request->validate([
-            'id_alat' => 'required',
-            'jumlah' => 'required|integer|min:1',
-            'tgl_rencana_kembali' => 'required|date'
-        ]);
+{
+    $request->validate([
+        'id_alat' => 'required|exists:alat,id_alat',
+        'jumlah' => 'required|integer|min:1',
+        'tgl_rencana_kembali' => 'required|date|after_or_equal:today',
+    ]);
 
-        $alat = Alat::findOrFail($request->id_alat);
+    $alat = Alat::findOrFail($request->id_alat);
 
-        if ($request->jumlah > $alat->stok) {
-            return back()->with('error', 'Stok tidak mencukupi!');
-        }
+    if ($alat->stok < $request->jumlah) {
+        return back()->with('error', 'Stok tidak mencukupi!');
+    }
 
+    DB::beginTransaction();
+
+    try {
+
+        // Buat peminjaman dengan status pending
         Peminjaman::create([
-            'id_user' => Auth::id(),
+            'id_user' => auth()->id(),
             'id_alat' => $request->id_alat,
             'jumlah' => $request->jumlah,
             'tgl_pinjam' => now(),
             'tgl_rencana_kembali' => $request->tgl_rencana_kembali,
-            'status' => 'pending'
+            'status' => 'pending',
         ]);
 
-        return back()->with('success', 'Pengajuan peminjaman berhasil!');
+        DB::commit();
+
+        return back()->with('success', 'Pengajuan peminjaman berhasil dikirim.');
+
+    } catch (\Exception $e) {
+
+        DB::rollBack();
+        return back()->with('error', 'Terjadi kesalahan, coba lagi.');
     }
+}
+
 
     public function kembali($id)
-    {
-        $peminjaman = Peminjaman::where('id_peminjaman', $id)
-            ->where('id_user', Auth::id())
+{
+    DB::beginTransaction();
+
+    try {
+
+        $peminjaman = Peminjaman::with('alat')
+            ->where('id_peminjaman', $id)
+            ->where('status', 'pinjam')
             ->firstOrFail();
 
-        if ($peminjaman->status != 'pinjam') {
-            return back()->with('error', 'Tidak bisa mengembalikan!');
-        }
+        // Tambah stok kembali
+        $peminjaman->alat->increment('stok', $peminjaman->jumlah);
 
-        $alat = Alat::find($peminjaman->id_alat);
-        $alat->stok += $peminjaman->jumlah;
-        $alat->save();
-
+        // Update status + tanggal kembali
         $peminjaman->update([
+            'status' => 'kembali',
             'tgl_kembali' => now(),
-            'status' => 'kembali'
         ]);
 
-        return back()->with('success', 'Alat berhasil dikembalikan!');
+        DB::commit();
+
+        return back()->with('success', 'Alat berhasil dikembalikan.');
+
+    } catch (\Exception $e) {
+
+        DB::rollBack();
+        return back()->with('error', 'Terjadi kesalahan.');
     }
+}
+
+
+
+    public function batal($id)
+{
+    $peminjaman = Peminjaman::where('id_peminjaman', $id)
+        ->where('id_user', Auth::id())
+        ->where('status', 'pending')
+        ->firstOrFail();
+
+    $peminjaman->delete();
+
+    return back()->with('success', 'Peminjaman berhasil dibatalkan.');
+}
+
 }
