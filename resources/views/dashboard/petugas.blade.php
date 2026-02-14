@@ -154,7 +154,7 @@ body {
             <td>{{ $item->jumlah }}</td>
             <td>{{ $item->tgl_pinjam }}</td>
             <td>
-                <form action="{{ route('peminjaman.kembali', $item->id_peminjaman) }}" method="POST">
+                <form action="{{ route('petugas.kembali', $item->id_peminjaman) }}" method="POST">
                     @csrf
                     <button class="btn-success"
                         onclick="return confirm('Yakin alat dikembalikan?')">

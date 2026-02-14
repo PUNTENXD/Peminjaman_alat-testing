@@ -14,7 +14,7 @@ body {
 .sidebar {
     width: 220px;
     height: 100vh;
-    background: #1f2937;
+    background: #000000;
     color: white;
     position: fixed;
 }
@@ -107,6 +107,105 @@ body {
     bottom: 0;
     width: 100%;
 }
+
+/* NAVBAR */
+.dashboard-navbar {
+    background: #ffffff;
+    padding: 15px 25px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #ddd;
+    margin-bottom: 25px;
+}
+
+.dashboard-navbar h2 {
+    margin: 0;
+}
+
+.user-info {
+    font-weight: bold;
+}
+
+/* TOP SECTION */
+.dashboard-top {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 40px;
+}
+
+/* LEFT BIG BOX */
+.left-box {
+    flex: 2;
+    background: #f1f1f1;
+    border-radius: 10px;
+    min-height: 250px;
+}
+
+/* RIGHT STATS GRID */
+.right-stats {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+
+/* STAT CARD */
+.stat-card {
+    padding: 20px;
+    border-radius: 10px;
+    color: white;
+    text-align: center;
+}
+
+.stat-card h4 {
+    margin: 0;
+    font-size: 14px;
+    opacity: .9;
+}
+
+.stat-card h2 {
+    margin: 5px 0 0;
+}
+
+/* COLORS */
+.blue { background: #9c9999; }
+.green { background: #9c9999; }
+.purple { background: #9c9999; }
+.orange { background: #9c9999; }
+.darkblue { background: #9c9999; }
+.darkgreen { background: #9c9999; }
+
+/* TABLE SECTION */
+.dashboard-table {
+    margin-bottom: 40px;
+}
+
+.table-dashboard {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+}
+
+.table-dashboard th, 
+.table-dashboard td {
+    padding: 12px;
+    border-bottom: 1px solid #ddd;
+    text-align: left;
+}
+
+/* STATUS BADGE */
+.badge {
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    color: white;
+}
+
+.badge.pending { background: #f59e0b; }
+.badge.pinjam { background: #2563eb; }
+.badge.kembali { background: #16a34a; }
+
 </style>
 
 

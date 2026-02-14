@@ -3,8 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Peminjaman;
-use App\Models\Alat;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 
@@ -21,6 +19,7 @@ class PetugasDashboardController extends Controller
 
         return view('dashboard.petugas', compact('data'));
     }
+    
 
    public function peminjaman()
 {

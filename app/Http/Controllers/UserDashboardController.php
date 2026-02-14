@@ -11,6 +11,8 @@ use Carbon\Carbon;
 
 
 
+
+
 class UserDashboardController extends Controller
 {
     public function index()
@@ -51,6 +53,13 @@ public function pinjam(Request $request)
             'tgl_rencana_kembali' => now()->addDays(7), // contoh default 7 hari
         ]);
 
+        
+
+
+
+
+        
+
 
         DB::commit();
         return back()->with('success','Berhasil meminjam alat!');
@@ -75,7 +84,7 @@ public function pinjam(Request $request)
             ->firstOrFail();
 
         // Tambah stok kembali
-        //$peminjaman->alat->increment('stok', $peminjaman->jumlah);
+        $peminjaman->alat->increment('stok', $peminjaman->jumlah);
 
         // Update status + tanggal kembali
         $peminjaman->update([

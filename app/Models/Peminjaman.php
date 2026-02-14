@@ -86,8 +86,12 @@ public function getHariTerlambatAttribute()
 // Hitung denda (2000 / hari)
 public function getDendaAttribute()
 {
-    return $this->hari_terlambat * 2000;
+    $hari = $this->hari_terlambat ?? 0;
+    $jumlah = $this->jumlah ?? 0;
+
+    return $hari * 5000 * $jumlah;
 }
+
 
 // Status terlambat
 public function getStatusTerlambatAttribute()

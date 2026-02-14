@@ -37,10 +37,7 @@
 </div>
 
 
-<div style="margin-bottom:15px;padding:12px;background:#fef3c7;border:1px solid #f59e0b;border-radius:6px;">
-    <strong>Total Akumulasi Denda: </strong>
-    Rp {{ number_format($totalDenda,0,',','.') }}
-</div>
+
 
 
 
