@@ -72,6 +72,285 @@ https://github.com/PUNTENXD/Peminjaman_alat-testing.git
 
 
 
+📌 USER
+INSERT → Menambahkan user
+UPDATE → Mengubah user
+DELETE → Menghapus user
+
+📌 KATEGORI
+INSERT
+UPDATE
+DELETE
+
+📌 ALAT
+INSERT
+UPDATE
+DELETE
+
+📌 PEMINJAMAN
+INSERT → User mengajukan peminjaman
+UPDATE status:
+pending → pinjam → ACC petugas
+pinjam → kembali → pengembalian
+
+
+
+
+
+
+
+
+
+user_______________________________________________
+
+DELIMITER $$
+
+CREATE TRIGGER trg_user_insert
+AFTER INSERT ON users
+FOR EACH ROW
+BEGIN
+    INSERT INTO log (id_user, aktivitas, target_tabel, id_target)
+    VALUES (
+        NEW.id_user,
+        'Menambahkan user',
+        'users',
+        NEW.id_user
+    );
+END$$
+
+DELIMITER ;
+
+
+
+
+DELIMITER $$
+
+CREATE TRIGGER trg_user_update
+AFTER UPDATE ON users
+FOR EACH ROW
+BEGIN
+    INSERT INTO log (id_user, aktivitas, target_tabel, id_target)
+    VALUES (
+        NEW.id_user,
+        'Mengubah data user',
+        'users',
+        NEW.id_user
+    );
+END$$
+
+DELIMITER ;
+
+
+
+
+DELIMITER $$
+
+CREATE TRIGGER trg_user_delete
+AFTER DELETE ON users
+FOR EACH ROW
+BEGIN
+    INSERT INTO log (id_user, aktivitas, target_tabel, id_target)
+    VALUES (
+        OLD.id_user,
+        'Menghapus user',
+        'users',
+        OLD.id_user
+    );
+END$$
+
+DELIMITER ;
+
+
+
+
+Kategori___________________
+
+
+DELIMITER $$
+
+CREATE TRIGGER trg_kategori_insert
+AFTER INSERT ON kategori
+FOR EACH ROW
+BEGIN
+    INSERT INTO log (id_user, aktivitas, target_tabel, id_target)
+    VALUES (
+        NULL,
+        'Menambahkan kategori',
+        'kategori',
+        NEW.id_kategori
+    );
+END$$
+
+DELIMITER ;
+
+
+
+
+CREATE TRIGGER trg_kategori_update
+AFTER UPDATE ON kategori
+FOR EACH ROW
+BEGIN
+    INSERT INTO log (id_user, aktivitas, target_tabel, id_target)
+    VALUES (
+        NULL,
+        'Mengubah kategori',
+        'kategori',
+        NEW.id_kategori
+    );
+END;
+
+
+
+
+
+
+CREATE TRIGGER trg_kategori_delete
+AFTER DELETE ON kategori
+FOR EACH ROW
+BEGIN
+    INSERT INTO log (id_user, aktivitas, target_tabel, id_target)
+    VALUES (
+        NULL,
+        'Menghapus kategori',
+        'kategori',
+        OLD.id_kategori
+    );
+END;
+
+
+
+
+
+
+
+
+
+
+
+alat_______________________________________________
+
+DELIMITER $$
+
+CREATE TRIGGER trg_alat_update
+AFTER UPDATE ON alat
+FOR EACH ROW
+BEGIN
+    INSERT INTO log (id_user, aktivitas, target_tabel, id_target)
+    VALUES (
+        NULL,
+        'Mengubah alat',
+        'alat',
+        NEW.id_alat
+    );
+END$$
+
+DELIMITER ;
+
+
+
+
+CREATE TRIGGER trg_alat_delete
+AFTER DELETE ON alat
+FOR EACH ROW
+BEGIN
+    INSERT INTO log (id_user, aktivitas, target_tabel, id_target)
+    VALUES (
+        NULL,
+        'Menghapus alat',
+        'alat',
+        OLD.id_alat
+    );
+END;
+
+
+
+
+
+
+Peminjaman_______________________________
+
+
+
+
+DELIMITER $$
+
+CREATE TRIGGER trg_peminjaman_insert
+AFTER INSERT ON peminjaman
+FOR EACH ROW
+BEGIN
+    INSERT INTO log (id_user, aktivitas, target_tabel, id_target)
+    VALUES (
+        NEW.id_user,
+        'Mengajukan peminjaman',
+        'peminjaman',
+        NEW.id_peminjaman
+    );
+END$$
+
+DELIMITER ;
+
+
+
+
+
+DELIMITER $$
+
+CREATE TRIGGER trg_peminjaman_update
+AFTER UPDATE ON peminjaman
+FOR EACH ROW
+BEGIN
+
+    IF OLD.status = 'pending' AND NEW.status = 'pinjam' THEN
+        INSERT INTO log (id_user, aktivitas, target_tabel, id_target)
+        VALUES (
+            NEW.id_user,
+            'Peminjaman disetujui petugas',
+            'peminjaman',
+            NEW.id_peminjaman
+        );
+    END IF;
+
+    IF OLD.status = 'pinjam' AND NEW.status = 'kembali' THEN
+        INSERT INTO log (id_user, aktivitas, target_tabel, id_target)
+        VALUES (
+            NEW.id_user,
+            'Pengembalian dikonfirmasi',
+            'peminjaman',
+            NEW.id_peminjaman
+        );
+    END IF;
+
+END$$
+
+DELIMITER ;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -98,6 +377,7 @@ php artisan cache:clear
 php artisan config:cache
 php artisan route:clear
 php artisan cache:clear
+php artisan serve
 
 
 Admin dashboard
@@ -148,10 +428,6 @@ seharusnya Ketika tanggal dibawah hari ini gak bisa diclick (sudah)
 
 
 
-
-
-
-
 halaman Kembali:
 data tanggal Kembali tidak tercatat, tambah detail jam pada saat click pinjam, dan saat click kembali (sudah)
 CATATAN: tabel peminjaman tgl_kembali diubah jadi DATETIME
@@ -172,7 +448,7 @@ tambahkan keterangan terlambat di tabel dan isinya menghitug berapa hari terlamb
 
 
 
-
+belum____________________________________________
 halaman log aktivitas:
 menggunakan trigger untuk manambahkan log, semisal saat click atau ada perubahan data 
 
@@ -201,6 +477,27 @@ pada tabel tgl Pinjam keterangan jamnya masih belum benar (lumayan tapi masih pe
 
 
 
+
+belum____________________________________________________
+patugas dashboard 
+
+di dashboard saat tekan aksi centang redirect ke admin dan ini salah ()
+
+
+
+
+
+
+
+halaaman pantau peminjaman:
+tombol ACC tidak berfungsi ketika ditekan(sudah)
+
+
+
+
+
+
+
 Peminjam dashboard
 
 halaman dashboard bagian daftar alat:
@@ -209,7 +506,7 @@ saat tekan pinjam hasilnya
 Akses ditolak (sudah)
 
 
-perbarui dashboard agar lebih mudah dimengerti
+perbarui dashboard agar lebih mudah dimengerti (su)
 
 
 opsionl fitur:
@@ -217,12 +514,15 @@ tambahkan fitur batalkan peminjaman hanya saat status pending
 
 
 
-gini saja pada halaman dashboard kita berikan daftar alat dan tombol pinjam yang akan memunculkan pop up untu mengisi data peminjaman, kalau bentunya begini kan UI nya jadi lebih bersih
-
-tambahkan halaman daftar peminjaman, didalanya ada data keterangan peminjaman dari sudut pandang peminjam seperti no, nama buku, tanggal pinjam, janggal rencana Kembali (atau ini kita jadikan durasi pinjam, nanti mentukany missal "7 hari"), status
+gini saja pada halaman dashboard kita berikan daftar alat dan tombol pinjam yang akan memunculkan pop up untu mengisi data peminjaman, kalau bentunya begini kan UI nya jadi lebih bersih (sudah)
 
 
-tambahkan juga halaman history pengembalian yang berisi data peminjaman yang sudah selesai dari sudut pandang peminjam ya
+
+
+tambahkan halaman daftar peminjaman, didalanya ada data keterangan peminjaman dari sudut pandang peminjam seperti no, nama buku, tanggal pinjam, janggal rencana Kembali (atau ini kita jadikan durasi pinjam, nanti bentukanya seperti "Durasi = 7 hari"), status
+
+
+tambahkan juga halaman history pengembalian yang berisi data peminjaman yang sudah selesai dari sudut pandang peminjam ya, kalau isinya tidaka seperi log tetapi seperti halaman kembali di admin yang dikurangi keterangannya
 
 
 Kalau mau next level lagi, kita bisa:
@@ -267,7 +567,6 @@ Ini adalah fitur untuk menjaga keamanan data jika terjadi error di tengah jalan.
     Konsep: Anggap kamu sedang proses pinjam alat. Step 1: Input data pinjam. Step 2: Kurangi stok alat. Jika Step 2 gagal (laptop mati/error), maka Step 1 harus dibatalkan.
     Commit: Menyimpan perubahan secara permanen (jika semua step berhasil).
     Rollback: Membatalkan semua perubahan (jika ada salah satu step yang gagal).
-
 
 
 
