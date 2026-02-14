@@ -118,15 +118,17 @@ body {
 
 <div class="sidebar">
     <h2>ADMIN</h2>
+
     <a href="{{ route('admin.dashboard') }}">Dashboard</a>
-    <a href="/user">User</a>
-    <a href="/kategori">Kategori</a>
-    <a href="{{ route('alat.index') }}">Alat</a>
-    <a href="/peminjaman">Peminjaman</a>
-    <a href="/kembali">Kembali</a>
-    <a href="/log">Log Aktivitas</a>
+    <a href="{{ route('admin.user.index') }}">User</a>
+    <a href="{{ route('admin.kategori.index') }}">Kategori</a>
+    <a href="{{ route('admin.alat.index') }}">Alat</a>
+    <a href="{{ route('peminjaman.index') }}">Peminjaman</a>
+    <a href="{{ route('kembali.index') }}">Kembali</a>
+    <a href="{{ route('admin.log.index') }}">Log Aktivitas</a>
 
     <div class="logout">
+
         <form action="{{ route('logout') }}" method="POST">
             @csrf
             <button style="width:100%;padding:12px;border:none;background:#dc2626;color:white;">

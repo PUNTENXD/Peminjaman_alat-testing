@@ -15,8 +15,9 @@
 
     {{-- FORM TAMBAH --}}
     <div class="card-form">
-        <form action="/kategori" method="POST">
-            @csrf
+       <form action="{{ route('admin.kategori.store') }}" method="POST">
+    @csrf
+
 
             <div class="form-group">
                 <label>Nama Kategori</label>
@@ -49,10 +50,10 @@
                     <td>{{ $k->nama_kategori }}</td>
 
                      <td>
-    <a href="{{ route('kategori.edit', $k->id_kategori) }}"
+    <a href="{{ route('admin.kategori.edit', $k->id_kategori) }}"
        class="btn btn-warning btn-sm">Edit</a>
 
-    <form action="{{ route('kategori.destroy', $k->id_kategori) }}"
+    <form action="{{ route('admin.kategori.destroy', $k->id_kategori) }}"
           method="POST"
           style="display:inline;">
         @csrf

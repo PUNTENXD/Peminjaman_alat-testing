@@ -54,10 +54,11 @@ Route::post('/logout', function () {
 
 Route::middleware(['auth','role:admin'])
     ->prefix('admin')
+    ->as('admin.')
     ->group(function () {
 
     Route::get('/dashboard', [AdminDashboardController::class, 'index'])
-        ->name('admin.dashboard');
+        ->name('dashboard');
 
     // ================= KATEGORI =================
     Route::get('/kategori', [KategoriController::class, 'index'])
@@ -127,25 +128,26 @@ Route::middleware(['auth','role:admin'])
 
 Route::middleware(['auth','role:petugas'])
     ->prefix('petugas')
+    ->as('petugas.')
     ->group(function () {
 
     Route::get('/dashboard', [PetugasDashboardController::class, 'index'])
-        ->name('petugas.dashboard');
+        ->name('dashboard');
 
     Route::get('/peminjaman', [PetugasDashboardController::class, 'peminjaman'])
-        ->name('petugas.peminjaman');
+        ->name('peminjaman');
 
     Route::get('/pengembalian', [PetugasDashboardController::class, 'pengembalian'])
-        ->name('petugas.pengembalian');
+        ->name('pengembalian');
 
     Route::get('/laporan', [PetugasDashboardController::class, 'laporan'])
-        ->name('petugas.laporan');
+        ->name('laporan');
 
     Route::post('/peminjaman/{id}/acc', [PetugasDashboardController::class, 'acc'])
-        ->name('petugas.acc');
+        ->name('acc');
 
     Route::post('/peminjaman/{id}/kembali', [PetugasDashboardController::class, 'kembalikan'])
-        ->name('petugas.kembali');
+        ->name('kembali');
 });
 
 
@@ -157,20 +159,20 @@ Route::middleware(['auth','role:petugas'])
 
 Route::middleware(['auth','role:peminjam'])
     ->prefix('user')
+    ->as('user.')
     ->group(function () {
 
     Route::get('/dashboard', [UserDashboardController::class, 'index'])
-        ->name('user.dashboard');
+        ->name('dashboard');
 
     Route::post('/pinjam', [UserDashboardController::class, 'pinjam'])
-        ->name('user.pinjam');
+        ->name('pinjam');
 
     Route::post('/kembali/{id}', [UserDashboardController::class, 'kembali'])
-        ->name('user.kembali');
+        ->name('kembali');
 
-        Route::post('/batal/{id}', [UserDashboardController::class, 'batal'])
-    ->name('user.batal');
-
+    Route::post('/batal/{id}', [UserDashboardController::class, 'batal'])
+        ->name('batal');
 });
 
 
@@ -180,22 +182,24 @@ Route::middleware(['auth','role:peminjam'])
 |--------------------------------------------------------------------------
 */
 
-Route::middleware(['auth','role:admin,petugas'])->group(function () {
+Route::middleware(['auth','role:admin,petugas'])
+    ->as('peminjaman.')
+    ->group(function () {
 
     Route::get('/peminjaman', [PeminjamanController::class, 'index'])
-        ->name('peminjaman.index');
+        ->name('index');
 
     Route::get('/peminjaman/{id}/edit', [PeminjamanController::class, 'edit'])
-        ->name('peminjaman.edit');
+        ->name('edit');
 
     Route::post('/peminjaman/{id}/update', [PeminjamanController::class, 'update'])
-        ->name('peminjaman.update');
+        ->name('update');
 
     Route::post('/peminjaman/{id}/acc', [PeminjamanController::class, 'acc'])
-        ->name('peminjaman.acc');
+        ->name('acc');
 
     Route::post('/peminjaman/{id}/kembali', [PeminjamanController::class, 'kembali'])
-        ->name('peminjaman.kembali');
+        ->name('kembali');
 });
 
 
@@ -205,8 +209,10 @@ Route::middleware(['auth','role:admin,petugas'])->group(function () {
 |--------------------------------------------------------------------------
 */
 
-Route::middleware(['auth','role:admin,petugas'])->group(function () {
+Route::middleware(['auth','role:admin,petugas'])
+    ->as('kembali.')
+    ->group(function () {
 
     Route::get('/kembali', [KembaliController::class, 'index'])
-        ->name('kembali.index');
+        ->name('index');
 });

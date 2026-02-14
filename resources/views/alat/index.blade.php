@@ -9,6 +9,21 @@
 </div>
 @endif
 
+
+@if(session('error'))
+    <div style="background:#ffdddd;padding:10px;color:#900;margin-bottom:10px;">
+        {{ session('error') }}
+    </div>
+@endif
+
+@if(session('success'))
+    <div style="background:#ddffdd;padding:10px;color:#060;margin-bottom:10px;">
+        {{ session('success') }}
+    </div>
+@endif
+
+
+
 <table border="1" cellpadding="8" cellspacing="0" width="100%" style="text-align:center;">
     <tr>
         <th>No</th>
@@ -27,12 +42,12 @@
         <td>{{ $item->stok }}</td>
         <td>{{ $item->kondisi }}</td>
         <td>
-            <a href="{{ route('alat.edit',$item->id_alat) }}"
+            <a href="{{ route('admin.alat.edit',$item->id_alat) }}"
                style="color:#2563eb;font-weight:bold;">
                 Edit
             </a>
 
-            <form action="{{ route('alat.destroy',$item->id_alat) }}"
+            <form action="{{ route('admin.alat.destroy',$item->id_alat) }}"
                   method="POST"
                   style="display:inline;margin-left:20px;">
                 @csrf
@@ -47,7 +62,7 @@
 </table>
 
 <br>
-<a href="{{ route('alat.create') }}"
+<a href="{{ route('admin.alat.create') }}"
    style="display:inline-block;margin-top:15px;padding:8px 15px;
           background:#2563eb;color:white;text-decoration:none;
           border-radius:5px;">

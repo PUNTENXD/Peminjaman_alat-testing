@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 
 
+
 class UserDashboardController extends Controller
 {
     public function index()
@@ -24,44 +25,42 @@ class UserDashboardController extends Controller
         return view('dashboard.user', compact('alat', 'peminjaman'));
     }
 
-    public function pinjam(Request $request)
+
+public function pinjam(Request $request)
 {
     $request->validate([
         'id_alat' => 'required|exists:alat,id_alat',
-        'jumlah' => 'required|integer|min:1',
-        'tgl_rencana_kembali' => 'required|date|after_or_equal:today',
+        'jumlah'  => 'required|integer|min:1',
     ]);
 
     $alat = Alat::findOrFail($request->id_alat);
 
-    if ($alat->stok < $request->jumlah) {
-        return back()->with('error', 'Stok tidak mencukupi!');
+    if ($request->jumlah > $alat->stok) {
+        return back()->with('error', 'Jumlah melebihi stok tersedia')->withInput();
     }
 
     DB::beginTransaction();
-
     try {
-
-        // Buat peminjaman dengan status pending
+        // Buat peminjaman
         Peminjaman::create([
-            'id_user' => auth()->id(),
-            'id_alat' => $request->id_alat,
-            'jumlah' => $request->jumlah,
+            'id_user' => auth()->user()->id_user,
+            'id_alat' => $alat->id_alat,
+            'jumlah'  => $request->jumlah,
+            'status'  => 'pending',
             'tgl_pinjam' => now(),
-            'tgl_rencana_kembali' => $request->tgl_rencana_kembali,
-            'status' => 'pending',
+            'tgl_rencana_kembali' => now()->addDays(7), // contoh default 7 hari
         ]);
 
-        DB::commit();
 
-        return back()->with('success', 'Pengajuan peminjaman berhasil dikirim.');
+        DB::commit();
+        return back()->with('success','Berhasil meminjam alat!');
 
     } catch (\Exception $e) {
-
         DB::rollBack();
-        return back()->with('error', 'Terjadi kesalahan, coba lagi.');
+        return back()->with('error','Terjadi kesalahan, coba lagi.');
     }
 }
+
 
 
     public function kembali($id)
@@ -76,7 +75,7 @@ class UserDashboardController extends Controller
             ->firstOrFail();
 
         // Tambah stok kembali
-        $peminjaman->alat->increment('stok', $peminjaman->jumlah);
+        //$peminjaman->alat->increment('stok', $peminjaman->jumlah);
 
         // Update status + tanggal kembali
         $peminjaman->update([

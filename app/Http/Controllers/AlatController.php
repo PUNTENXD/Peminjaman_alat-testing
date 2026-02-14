@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Alat;
 use App\Models\Kategori;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+
 
 class AlatController extends Controller
 {
@@ -61,7 +63,7 @@ class AlatController extends Controller
         'kondisi'     => $request->kondisi,
     ]);
 
-    return redirect()->route('alat.index')
+    return redirect()->route('admin.alat.index')
         ->with('success','Data alat berhasil ditambahkan');
 }
 
@@ -97,7 +99,7 @@ class AlatController extends Controller
 
         $alat->update($request->all());
 
-        return redirect()->route('alat.index')
+        return redirect()->route('admin.alat.index')
             ->with('success','Data alat berhasil diperbarui');
     }
 
@@ -107,11 +109,19 @@ class AlatController extends Controller
     |--------------------------------------------------------------------------
     */
     public function destroy($id)
-    {
-        $alat = Alat::findOrFail($id);
-        $alat->delete();
+{
+    $dipakai = DB::table('peminjaman')
+                ->where('id_alat', $id)
+                ->exists();
 
-        return redirect()->route('alat.index')
-            ->with('success','Data alat berhasil dihapus');
+    if ($dipakai) {
+        return redirect()->back()
+            ->with('error', 'Alat tidak bisa dihapus karena masih memiliki data peminjaman.');
     }
+
+    DB::table('alat')->where('id_alat', $id)->delete();
+
+    return redirect()->back()
+        ->with('success', 'Alat berhasil dihapus.');
+}
 }

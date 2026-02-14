@@ -16,39 +16,38 @@
     </tr>
 
     @foreach($users as $u)
-    <tr>
-        <td>{{ $u->username }}</td>
-        <td>{{ ucfirst($u->role) }}</td>
-        <td>
+<tr>
+    <td>{{ $u->username }}</td>
+    <td>{{ ucfirst($u->role) }}</td>
+    <td>
 
-            <a href="/user/{{ $u->id_user }}/edit"
-               class="btn-edit">
-                Edit
-            </a>
+        <a href="{{ route('admin.user.edit', $u->id_user) }}">
+            Edit
+        </a>
 
-            @if($u->role !== 'admin')
-            <form action="/user/{{ $u->id_user }}/delete"
-                  method="POST"
-                  style="display:inline;">
-                @csrf
-                <button type="submit"
-                        class="btn-delete"
-                        onclick="return confirm('Hapus user?')">
-                    Hapus
-                </button>
-            </form>
-            @endif
+        @if($u->role !== 'admin')
+        <form action="{{ route('admin.user.destroy', $u->id_user) }}"
+              method="POST"
+              style="display:inline;">
+            @csrf
+            <button type="submit"
+                    class="btn-delete"
+                    onclick="return confirm('Hapus user?')">
+                Hapus
+            </button>
+        </form>
+        @endif
 
-        </td>
-    </tr>
-    @endforeach
+    </td>
+</tr>
+@endforeach
+
 </table>
 
 {{-- Tombol tambah user pindah ke bawah --}}
 <div class="tambah-wrapper">
-    <a href="/user/create" class="btn-tambah">
-        + Tambah User
-    </a>
+    <a href="{{ route('admin.user.create') }}">Tambah User</a>
+
 </div>
 
 <style>

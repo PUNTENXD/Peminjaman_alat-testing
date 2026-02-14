@@ -9,8 +9,11 @@ class UserController extends Controller
 {
     public function index()
     {
+        // $user = User::orderBy('id_user','desc')->get();
+        // return view('User.index', compact('user'));
         $users = User::orderBy('id_user','desc')->get();
         return view('User.index', compact('users'));
+
     }
 
     public function create()
@@ -32,7 +35,9 @@ class UserController extends Controller
             'role' => $request->role,
         ]);
 
-        return redirect('/user')->with('success','User berhasil ditambahkan');
+       return redirect()->route('admin.user.index')
+    ->with('success','User berhasil ditambahkan');
+
     }
 
     public function edit($id)

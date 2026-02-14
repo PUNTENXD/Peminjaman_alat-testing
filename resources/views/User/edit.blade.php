@@ -13,38 +13,39 @@
 
 <div class="form-wrapper">
 
-    <form method="POST" action="/user/{{ $user->id_user }}">
-        @csrf
+    <form method="POST"
+      action="{{ route('admin.user.update', $user->id_user) }}">
+    @csrf
 
-        <div class="form-group">
-            <label>Username</label>
-            <input type="text"
-                   name="username"
-                   value="{{ $user->username }}"
-                   required>
-        </div>
+    <div class="form-group">
+        <label>Username</label>
+        <input type="text"
+               name="username"
+               value="{{ $user->username }}"
+               required>
+    </div>
 
-        <div class="form-group">
-            <label>Password Baru (Opsional)</label>
-            <input type="password"
-                   name="password"
-                   placeholder="Kosongkan jika tidak diubah">
-        </div>
+    <div class="form-group">
+        <label>Password Baru (Opsional)</label>
+        <input type="password"
+               name="password"
+               placeholder="Kosongkan jika tidak diubah">
+    </div>
 
-        <div class="form-group">
-            <label>Role</label>
-            <select name="role">
-                <option value="admin" {{ $user->role=='admin'?'selected':'' }}>Admin</option>
-                <option value="petugas" {{ $user->role=='petugas'?'selected':'' }}>Petugas</option>
-                <option value="peminjam" {{ $user->role=='peminjam'?'selected':'' }}>Peminjam</option>
-            </select>
-        </div>
+    <div class="form-group">
+        <label>Role</label>
+        <select name="role">
+            <option value="admin" {{ $user->role=='admin'?'selected':'' }}>Admin</option>
+            <option value="petugas" {{ $user->role=='petugas'?'selected':'' }}>Petugas</option>
+            <option value="peminjam" {{ $user->role=='peminjam'?'selected':'' }}>Peminjam</option>
+        </select>
+    </div>
 
-        <button type="submit" class="btn-update">
-            Update User
-        </button>
+    <button type="submit" class="btn-update">
+        Update User
+    </button>
+</form>
 
-    </form>
 </div>
 
 

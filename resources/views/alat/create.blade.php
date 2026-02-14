@@ -9,7 +9,7 @@
 
         <h2 style="margin-bottom:25px;">Tambah Data Alat</h2>
 
-        <form action="{{ route('alat.store') }}" method="POST">
+        <form action="{{ route('admin.alat.store') }}" method="POST">
             @csrf
 
             {{-- Kategori --}}
@@ -54,7 +54,7 @@
             {{-- Button --}}
             <div style="display:flex;justify-content:space-between;">
 
-                <a href="{{ route('alat.index') }}"
+                <a href="{{ route('admin.alat.index') }}"
                    style="text-decoration:none;padding:10px 18px;
                           background:#6b7280;color:white;
                           border-radius:6px;">

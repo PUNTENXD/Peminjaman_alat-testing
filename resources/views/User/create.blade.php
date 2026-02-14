@@ -13,8 +13,9 @@
 
 <div class="form-wrapper">
 
-    <form method="POST" action="/user">
-        @csrf
+   <form action="{{ route('admin.user.store') }}" method="POST">
+    @csrf
+
 
         <div class="form-group">
             <label>Username</label>

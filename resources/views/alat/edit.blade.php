@@ -9,8 +9,10 @@
 
         <h2 style="margin-bottom:25px;">Edit Data Alat</h2>
 
-        <form action="{{ route('alat.update',$alat->id_alat) }}" method="POST">
-            @csrf
+        <form action="{{ route('admin.alat.update', $alat->id_alat) }}" method="POST">
+    @csrf
+
+
 
             {{-- Kategori --}}
             <div style="margin-bottom:20px;">
@@ -42,7 +44,7 @@
                 <input type="number"
        name="stok"
        min="1"
-       value="1"
+       value="{{ $alat->stok }}"
        required
        style="width:100%;padding:10px;margin-top:5px;
               border:1px solid #ddd;border-radius:6px;">
@@ -61,7 +63,7 @@
             {{-- Button --}}
             <div style="display:flex;justify-content:space-between;">
 
-                <a href="{{ route('alat.index') }}"
+                <a href="{{ route('admin.alat.index') }}"
                    style="text-decoration:none;padding:10px 18px;
                           background:#6b7280;color:white;
                           border-radius:6px;">

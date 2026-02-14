@@ -73,17 +73,19 @@ public function acc($id)
 
     try {
 
-        $peminjaman = Peminjaman::with('alat')
-            ->where('id_peminjaman', $id)
-            ->where('status', 'pending')
-            ->firstOrFail();
+      $peminjaman = Peminjaman::with('alat')
+    ->lockForUpdate()
+    ->where('id_peminjaman', $id)
+    ->where('status', 'pending')
+    ->firstOrFail();
+
 
         if ($peminjaman->alat->stok < $peminjaman->jumlah) {
             return back()->with('error', 'Stok tidak mencukupi.');
         }
 
-        // Kurangi stok
-        $peminjaman->alat->decrement('stok', $peminjaman->jumlah);
+        // // Kurangi stok
+         $peminjaman->alat->decrement('stok', $peminjaman->jumlah);
 
         // Ubah status
         $peminjaman->update([
@@ -108,10 +110,19 @@ public function kembalikan($id)
 
     try {
 
-        $peminjaman = Peminjaman::with('alat')
-            ->where('id_peminjaman', $id)
-            ->where('status', 'pinjam')
-            ->firstOrFail();
+       $peminjaman = Peminjaman::with('alat')
+    ->where('id_peminjaman', $id)
+    ->first();
+
+    if (!$peminjaman) {
+    return back()->with('error','Data tidak ditemukan');
+}
+
+if ($peminjaman->status !== 'pending') {
+    return back()->with('error','Status bukan pending');
+}
+
+
 
         // Tambah stok kembali
         $peminjaman->alat->increment('stok', $peminjaman->jumlah);

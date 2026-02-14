@@ -57,62 +57,57 @@ class PeminjamanController extends Controller
     |--------------------------------------------------------------------------
     */
     public function update(Request $request, $id)
-    {
-        $peminjaman = Peminjaman::findOrFail($id);
+{
+    $request->validate([
+        'jumlah' => 'required|integer|min:1'
+    ]);
 
-        if ($peminjaman->status !== 'pending') {
-            abort(403);
+    $peminjaman = Peminjaman::findOrFail($id);
+
+    $alatLama = Alat::findOrFail($peminjaman->id_alat);
+    $alatBaru = Alat::findOrFail($request->id_alat);
+
+    // Jika alat tidak diganti
+    if ($alatLama->id_alat == $alatBaru->id_alat) {
+
+        $stokTersedia = $alatLama->stok + $peminjaman->jumlah;
+
+        if ($request->jumlah > $stokTersedia) {
+            return back()->with('error','Jumlah melebihi stok tersedia')->withInput();
         }
 
-        $request->validate([
-            'id_alat' => 'required|exists:alat,id_alat',
-            'jumlah' => 'required|integer|min:1',
-            'tgl_pinjam' => 'required|date|after_or_equal:today',
-            'tgl_rencana_kembali' => 'required|date|after:tgl_pinjam'
-        ]);
+        // Hitung selisih
+        $selisih = $request->jumlah - $peminjaman->jumlah;
 
-        DB::transaction(function () use ($request, $peminjaman) {
+        $alatLama->stok -= $selisih;
+        $alatLama->save();
 
-            $alatLama = Alat::findOrFail($peminjaman->id_alat);
-            $alatBaru = Alat::findOrFail($request->id_alat);
+    } else {
 
-            $jumlahLama = $peminjaman->jumlah;
-            $jumlahBaru = $request->jumlah;
+        // Kembalikan stok alat lama
+        $alatLama->stok += $peminjaman->jumlah;
+        $alatLama->save();
 
-            if ($alatLama->id_alat == $alatBaru->id_alat) {
+        if ($request->jumlah > $alatBaru->stok) {
+            return back()->with('error','Stok alat baru tidak mencukupi')->withInput();
+        }
 
-                $selisih = $jumlahBaru - $jumlahLama;
-
-                if ($selisih > 0 && $alatBaru->stok < $selisih) {
-                    abort(400,'Stok tidak mencukupi');
-                }
-
-                $alatBaru->stok -= $selisih;
-                $alatBaru->save();
-            } else {
-
-                $alatLama->stok += $jumlahLama;
-                $alatLama->save();
-
-                if ($alatBaru->stok < $jumlahBaru) {
-                    abort(400,'Stok alat baru tidak mencukupi');
-                }
-
-                $alatBaru->stok -= $jumlahBaru;
-                $alatBaru->save();
-            }
-
-            $peminjaman->update([
-                'id_alat' => $request->id_alat,
-                'jumlah' => $jumlahBaru,
-                'tgl_pinjam' => $request->tgl_pinjam,
-                'tgl_rencana_kembali' => $request->tgl_rencana_kembali
-            ]);
-        });
-
-        return redirect()->route('peminjaman.index')
-            ->with('success','Data berhasil diperbarui');
+        $alatBaru->stok -= $request->jumlah;
+        $alatBaru->save();
     }
+
+    $peminjaman->update([
+        'id_alat' => $request->id_alat,
+        'jumlah' => $request->jumlah,
+        'tgl_pinjam' => $request->tgl_pinjam,
+        'tgl_rencana_kembali' => $request->tgl_rencana_kembali
+    ]);
+
+    return redirect()->route('peminjaman.index')
+        ->with('success','Data peminjaman berhasil diperbarui');
+}
+
+
 
     /*
     |--------------------------------------------------------------------------

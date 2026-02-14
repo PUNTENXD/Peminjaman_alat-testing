@@ -13,7 +13,7 @@
 
 <div class="form-wrapper">
 
-    <form method="POST" action="{{ route('kategori.update', $kategori->id_kategori) }}">
+    <form method="POST" action="{{ route('admin.kategori.update', $kategori->id_kategori) }}">
         @csrf
         @method('PUT')
 

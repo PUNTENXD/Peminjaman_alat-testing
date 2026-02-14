@@ -34,8 +34,10 @@
                 <input type="number"
        name="jumlah"
        min="1"
-       value="{{ $peminjaman->jumlah }}"
+       max="{{ $alat->stok }}"
+       value="1"
        required>
+
 
             </div>
 
