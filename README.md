@@ -377,7 +377,6 @@ php artisan cache:clear
 php artisan config:cache
 php artisan route:clear
 php artisan cache:clear
-php artisan serve
 
 
 Admin dashboard
@@ -428,6 +427,10 @@ seharusnya Ketika tanggal dibawah hari ini gak bisa diclick (sudah)
 
 
 
+
+
+
+
 halaman Kembali:
 data tanggal Kembali tidak tercatat, tambah detail jam pada saat click pinjam, dan saat click kembali (sudah)
 CATATAN: tabel peminjaman tgl_kembali diubah jadi DATETIME
@@ -448,7 +451,7 @@ tambahkan keterangan terlambat di tabel dan isinya menghitug berapa hari terlamb
 
 
 
-belum____________________________________________
+
 halaman log aktivitas:
 menggunakan trigger untuk manambahkan log, semisal saat click atau ada perubahan data 
 
@@ -477,27 +480,6 @@ pada tabel tgl Pinjam keterangan jamnya masih belum benar (lumayan tapi masih pe
 
 
 
-
-belum____________________________________________________
-patugas dashboard 
-
-di dashboard saat tekan aksi centang redirect ke admin dan ini salah ()
-
-
-
-
-
-
-
-halaaman pantau peminjaman:
-tombol ACC tidak berfungsi ketika ditekan(sudah)
-
-
-
-
-
-
-
 Peminjam dashboard
 
 halaman dashboard bagian daftar alat:
@@ -506,7 +488,7 @@ saat tekan pinjam hasilnya
 Akses ditolak (sudah)
 
 
-perbarui dashboard agar lebih mudah dimengerti (su)
+perbarui dashboard agar lebih mudah dimengerti
 
 
 opsionl fitur:
@@ -514,15 +496,12 @@ tambahkan fitur batalkan peminjaman hanya saat status pending
 
 
 
-gini saja pada halaman dashboard kita berikan daftar alat dan tombol pinjam yang akan memunculkan pop up untu mengisi data peminjaman, kalau bentunya begini kan UI nya jadi lebih bersih (sudah)
+gini saja pada halaman dashboard kita berikan daftar alat dan tombol pinjam yang akan memunculkan pop up untu mengisi data peminjaman, kalau bentunya begini kan UI nya jadi lebih bersih
+
+tambahkan halaman daftar peminjaman, didalanya ada data keterangan peminjaman dari sudut pandang peminjam seperti no, nama buku, tanggal pinjam, janggal rencana Kembali (atau ini kita jadikan durasi pinjam, nanti mentukany missal "7 hari"), status
 
 
-
-
-tambahkan halaman daftar peminjaman, didalanya ada data keterangan peminjaman dari sudut pandang peminjam seperti no, nama buku, tanggal pinjam, janggal rencana Kembali (atau ini kita jadikan durasi pinjam, nanti bentukanya seperti "Durasi = 7 hari"), status
-
-
-tambahkan juga halaman history pengembalian yang berisi data peminjaman yang sudah selesai dari sudut pandang peminjam ya, kalau isinya tidaka seperi log tetapi seperti halaman kembali di admin yang dikurangi keterangannya
+tambahkan juga halaman history pengembalian yang berisi data peminjaman yang sudah selesai dari sudut pandang peminjam ya
 
 
 Kalau mau next level lagi, kita bisa:
@@ -558,6 +537,36 @@ status:
 password minimal 8 digit
 status tengah
 denda/number kanan 
+ 
+
+
+petugas bisa registrasi peminjam
+detail peminjam ada nama,alamat,email, kalua mau lebih bagus kasih validasi KTP
+
+
+denda per hari 1% dari jumlah benda yang dipinjam,no telephone, jadinya denda dihitung dari Harga benda
+
+
+melebihi kuota tidak bisa
+
+
+detail, jumlah stok di akun peminjam
+
+
+
+untuk yang masuh meminjamb alat satu satu, jadi peminjam bisa meminjam alat beberapa sekaligus
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
