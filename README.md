@@ -540,23 +540,19 @@ denda/number kanan
  
 
 
+
 petugas bisa registrasi peminjam
-detail peminjam ada nama,alamat,email, kalua mau lebih bagus kasih validasi KTP
+detail peminjam ada nama,alamat,email,,no telephone kalau mau lebih bagus kasih validasi KTP/data diri
 
+kita akan buat profil dashboard (sudah disiapkan tempatnya)
+buat agar aplikasinya bisa menyimpan gambar, gak tau fungsinya untuk apa nanti kita tentukan
 
-denda per hari 1% dari jumlah benda yang dipinjam,no telephone, jadinya denda dihitung dari Harga benda
-
-
+denda per hari 1% dari jumlah benda yang dipinjam, jadinya denda dihitung dari Harga benda
 melebihi kuota tidak bisa
-
-
-detail, jumlah stok di akun peminjam
-
-
-
+detail, jumlah stok di akun peminjam(sudah tinggal di kembangkan lagi)
 untuk yang masuh meminjamb alat satu satu, jadi peminjam bisa meminjam alat beberapa sekaligus
 
-
+karena persayratannya makin gak masuk akal untuk UKK, jadinya saya mau menambah 1 fitur lagi, yaitu chat AI, AI ini bisa menjelaskan fitur apa saja yang ada di aplikasi, lalu kita buat personality untuk membatasi beberapa pembahasan,dan ada fitur reset chat
 
 
 
